@@ -1,6 +1,8 @@
 \documentclass[12pt]{article}
 \usepackage{blindtext}
 \usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{float}
 
 \graphicspath{{./images/}}
 
@@ -54,24 +56,80 @@ considerations}:
 \item{rolling resistance}
 \end{itemize}
 \newpage
-\subsection{Forces acting on a bicycle when stationary}
-When stationary, the only force acting on the bike is weight of the rider which gets split between bike's axles.
-The proportion of force acting on front axle versus rear axle is dependent on the position of the centre of mass
-of both bike and rider. \\
-Force excerted on either axle is calculated from torque applied on the rear axle: \\
-$F = \frac{\tau}{r}$\\
-$F_f = \frac{d \cdot mg}{l}$\\
-$F_r = mg - F_f$
+
+\subsection{Theoretical model of bicycle and cyclist}
+The model of bike and a rider for this analysis is two dimensional, because no lateral forces are taken in 
+consideration. The cases for safe braking are checked with the state of wheels, hence the focal point of the 
+analysis will be forces excerted on axles, so the whole frame of the bike can be reduced to a single beam 
+spanning from axle to axle. The rider is reduced to net centre of mass of bike and cyclist, which is connected
+perpendicularly to the virtual beam. Figure~\ref{bike_diagram_1} shows the simplification of the model.
 \begin{figure}[h]
+\caption{}
 \centering
-\includegraphics[width = 0.65 \linewidth]{static_with_forces_bike}
-\caption{bicycle and rider diagram}
-\end{figure}
-\begin{figure}[h]
-\centering
-\includegraphics[width = 0.45 \linewidth]{bike_static_model_simplified}
-\caption{simplified diagram of rider and bicycle}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width=\linewidth]{bike_static_model_bike}
+\label{fig:bike_diagram}%
+\caption{}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\includegraphics[width=\linewidth]{bike_static_model_simplified}
+\caption{}
+\label{fig:beam_diagram}%
+\end{subfigure}
+\label{fig:theoretical_models}%
 \end{figure}
 
-\subsection{Forces acting on a bicycle when braking}
+\newpage
+
+\subsection{Force distribution on the axles}
+The force distribution on the axles is the most important part of the analysis, as it gives us data to 
+determine the deceleration and whether or not the conditions for safe braking are maintained.
+\begin{figure}[H]
+\caption{diagram for calculation of forces on axles}
+\includegraphics[width=\linewidth]{static_forces_simplified}
+\label{fig:static_diagram}%
+\end{figure}
+
+\subsubsection{Cyclist static or moving at constant speed}
+First let us consider the case of the cyclist being stationary or moving at a constant speed. In order to 
+calculate the forces on each axle, we need to consider moments of force applied to the frame, which will be
+our moment arm (fig.~\ref{fig:static_diagram}). When a cyclist is on the bike, the point on the frame, where
+the force is being excerted is right below his centre of mass. In order to calculate the either of the forces 
+on the axles, we need to equate internal torques to either point A or B in fig.~\ref{fig:static_diagram}: 
+\emph{$F_f l = mg \cdot d, F_f = \frac{mg \cdot d}{l}$}. Because the net force of the system is the weight
+of the rider with the bike, the force on the other axle is \emph{$F_r = mg - F_f$}. \\
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{axles_static_graph}
+\label{fig:static_graph}%
+\end{figure}
+When we plot these equations as functions of the distance, fig.~\ref{fig:static_graph}\footnote[1]{graph is 
+generated with parameters from the experiment}. The load on the front axle is a linear function with 
+coefficient of $\frac{mg}{l}$, which means that the heavier the rider and bike, the steeper the graph.
+Same effect would have been making the bike shorter. The force on the rear axle is the inverse of front one.
+
+\subsubsection{Cyclist decelerating}
+For this moment we will consider cyclist just decelerating neglecting what is happening to wheels, focusing
+our attention on axles just like in section above. When decelerating, aside from forces caused by the weight, 
+we also need to consider force coming from deceleration of the body. From second Newton's law we know that 
+$F = ma$, however we are considering our problem in terms of torque, so we need to find the lever arm this
+force is acting upon. As mentioned above we are assuming that bicycle and the rider are one rigid body. 
+Having assume that, we can say that the centre of mass of bike and rider is connected with a virtual lever
+connected at 90 degrees to our main moment arm, which is bike frame (fig.~\ref{fig:theoretical_models}
+\subref{fig:beam_diagram}). Just like before, we need to equate the moments, but in this case, we need to 
+equate them to point C, as we need to include vertical lever (fig. ~\ref{fig:static_diagram}): 
+$F_f * l = mg * d + ma * h, F_f = frac{mg * d + ma * h}{l}$. And just like in previous example, 
+the force in the rear is: $F_r = mg - F_f$.In this case, however, it is possible for forces to be 
+negative (fig~\ref{fig:dynamic_graph}), which makes us segue to the next section.
+\begin{figure}[H]
+\caption{}
+\includegraphics[width=\linewidth]{axles_dynamic_graph}
+\label{fig:dynamic_graph}
+\end{figure}
+
+\section{The effect of the load on axles on braking}
+When considering safe braking in a straight line, we need to focus on two factors: static friction between 
+wheels and the surface and the direction of the force acting on the rear axle~\ref{fig:dynamic_graph}. 
+The static friction between the wheels and the surface dictates the maximum deceleration while braking. We can 
+calculate the maximum braking force without skidding with: $F_b = \mu F$
+
 \end{document}
