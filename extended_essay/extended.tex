@@ -39,7 +39,7 @@ finding about it by crashing.
 \subsection{Rules and assumptions for the analysis}
 Assumptions about bicycle and rider:
 \begin{itemize}
-\item{the rider is a stiff body}
+\item{rider with bicycle make one rigid body}
 \item{there is no dissipation of force}
 \end{itemize}
 Safe braking in the analysis is defined by two factors:
@@ -62,7 +62,7 @@ The model of bike and a rider for this analysis is two dimensional, because no l
 consideration. The cases for safe braking are checked with the state of wheels, hence the focal point of the 
 analysis will be forces excerted on axles, so the whole frame of the bike can be reduced to a single beam 
 spanning from axle to axle. The rider is reduced to net centre of mass of bike and cyclist, which is connected
-perpendicularly to the virtual beam. Figure~\ref{bike_diagram_1} shows the simplification of the model.
+perpendicularly to the virtual beam. Figure~\ref{fig:theoretical_models} shows the simplification of the model.
 \begin{figure}[h]
 \caption{}
 \centering
@@ -96,14 +96,35 @@ calculate the forces on each axle, we need to consider moments of force applied 
 our moment arm (fig.~\ref{fig:static_diagram}). When a cyclist is on the bike, the point on the frame, where
 the force is being excerted is right below his centre of mass. In order to calculate the either of the forces 
 on the axles, we need to equate internal torques to either point A or B in fig.~\ref{fig:static_diagram}: 
-\emph{$F_f l = mg \cdot d, F_f = \frac{mg \cdot d}{l}$}. Because the net force of the system is the weight
-of the rider with the bike, the force on the other axle is \emph{$F_r = mg - F_f$}. \\
+\begin{equation}
+\centering%
+\label{eq:equating_torques}
+F_f \cdot l = mg \cdot d
+\end{equation}
+
+\newpage
+
+From this equation we can derive load on front axle (eq.~\ref{eq:F_f}). The net force on acting 
+on the bike is $mg$, therefore the load on rear axle will be described as in equation~\ref{eq:F_r}
+\begin{equation}
+\centering%
+\label{eq:F_f}
+F_f = \frac{mg \cdot d}{l}
+\end{equation}
+\begin{equation}
+\centering%
+\label{eq:F_r}
+F_r = mg - F_f
+\end{equation}
+
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{axles_static_graph}%
+\centering
+\caption{}
+\includegraphics[width=0.8\linewidth]{axles_static_graph}%
 \label{fig:static_graph}
 \end{figure}
-When we plot these equations as functions of the distance, fig.~\ref{fig:static_graph}\footnote[1]{graph is 
-generated with parameters from the experiment}. The load on the front axle is a linear function with 
+When we plot these equations as functions of the distance, (fig.~\ref{fig:static_graph}\footnote[1]{graph is 
+generated with parameters from the experiment}). The load on the front axle is a linear function with 
 coefficient of $\frac{mg}{l}$, which means that the heavier the rider and bike, the steeper the graph.
 Same effect would have been making the bike shorter. The force on the rear axle is the inverse of front one.
 
@@ -117,20 +138,31 @@ Having assume that, we can say that the centre of mass of bike and rider is conn
 connected at 90 degrees to our main moment arm, which is bike frame (fig.~\ref{fig:theoretical_models}
 \subref{fig:beam_diagram}). Just like before, we need to equate the moments, but in this case, we need to 
 equate them to point C, as we need to include vertical lever (fig.~\ref{fig:static_diagram}): 
-$F_f * l = mg * d + ma * h, F_f = frac{mg * d + ma * h}{l}$. And just like in previous example, 
-the force in the rear is: $F_r = mg - F_f$.In this case, however, it is possible for forces to be 
-negative (fig~\ref{fig:dynamic_graph}).
+\begin{equation}
+\centering%
+\label{eq:eq_torques_dyn}
+F_f \cdot l = mg \cdot d + ma \cdot h
+\end{equation}
+And just like in previous example, the force in the rear is: 
+\begin{equation}
+\centering%
+\label{eq:eq_torques_dyn}
+F_r = mg - F_f
+\end{equation}
+In this case, however, it is possible for forces to be negative (fig~\ref{fig:dynamic_graph}).
 \begin{figure}[H]
+\centering
 \caption{}
-\includegraphics[width=\linewidth]{axles_dynamic_graph}%
+\includegraphics[width=0.8\linewidth]{axles_dynamic_graph}%
 \label{fig:dynamic_graph}
 \end{figure}
 
 \section{Physical explanation of safe braking}
 \subsection{Maintaining rolling of wheels while braking}
 \begin{figure}[H]
+\centering
 \caption{}
-\includegraphics[width=0.75\textwidth]{wheel_braking_forces}%
+\includegraphics[width=0.5\linewidth]{wheel_braking_forces}%
 \label{fig:wheel_diagram_1}
 \end{figure}
 The limiting factor for braking without skidding is the maximum frictional force between the tire and the 
@@ -148,10 +180,56 @@ that by equating torques to that point like so:
 \label{eq:F_bw}
 F_b \cdot r_b = F_{bw} \cdot r_w
 \end{equation}
-In figure~\ref{fig:wheel_diagram_1} we are analysing wheel with a disk brake, the other type of brake is 
-V-brake, which clamps down on the rim with rubber pads, which means that the vector $F_b$ in that case would 
-have its origin on the rim. Because of such variations, we will be refering to the braking force in reference 
-to the tire-surface contact point rather than the force between brake pad and braking surface.
+Therefore, from equations~\ref{eq:F_ms} and~\ref{eq:F_bw} we can that in order to brake and not skid the following
+condition must be met:
+\begin{equation}
+\centering%
+\label{eq:braking_final_eq}
+F_y \cdot \mu \geq F_{bw}
+\end{equation}
+Note that we are referring to the braking force as $F_{bw}$ only. This is because of the abundance of different
+types of brakes found on bikes, in order to make the analysis universal we need to look at the output force rather
+than the input one, which would be relevant for checking whether the brake would be capable of exceting
+such stopping force. The other thing that should be emphasised in equation~\ref{eq:braking_final_eq} is the 
+more-or-equal sign. Braking at force equal is very unstable, as smallest spike in force can cause instantaneus 
+skidding because of the gap between static and dynamic friction coefficient.
 
 \subsection{Keeping rear wheel from lifing off}
+\begin{figure}[H]
+\caption{}
+\centering%
+\label{fig:angular_acceleration_figure}
+\includegraphics[width=0.8\linewidth]{angular_acceleration_diagram}%
+\end{figure}
+The more dangerous threat when braking is angular acceleration of the whole bike around the front axle resulting
+in rear wheel getting into the air. In order for that to happen, there must be a vector of force pointing upwards
+from rear axle, which, as we can see in figure~\ref{fig:dynamic_graph} appears as negative values on the graph.
+In order to calculate the angular acceleration ($\alpha$), we need to calculate the moment of inertia of rider 
+and bicycle.
+\begin{equation}
+\centering%
+\label{eq:moment_of_inertia}
+\sum \tau = F_r \cdot l =  I\alpha = MR^2\alpha
+\end{equation}
+The sum of torques in our case is the moment excerted by $F_r$ only, as the torque excerted by the $F_f$ is 
+zero because its lever arm is 0. Knowing that, $\sum \tau$ can be denoted just as $\tau$. With that, we can
+calculate the angular acceleration of the whole body while braking
+\begin{equation}
+\centering%
+\label{eq:angular_acceleration_eq}
+\alpha = \frac{\tau}{MR^2}
+\end{equation}
+If we plot equation~\ref{eq:angular_acceleration_eq} as a function of distance from the rear axle along with 
+torque and moment of inertia, we can see just how quickly the angular acceleration rises when the centre of mass
+gets closer to the axis of rotation. With this graph we can see that when we get close enough to the axis of 
+rotation, every centimeter can have a huge impact on the angular acceleration, and in turn the reaction time 
+we have to prevent what is widely known as going over the bars.
+\begin{figure}[H]
+\caption{}
+\centering%
+\label{fig:angular_acceleration_graph}
+\includegraphics[width=0.8\linewidth]{angular_acceleration}%
+\end{figure}
+
+
 \end{document}
