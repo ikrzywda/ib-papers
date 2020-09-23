@@ -67,16 +67,16 @@ perpendicularly to the virtual beam. Figure~\ref{bike_diagram_1} shows the simpl
 \caption{}
 \centering
 \begin{subfigure}[b]{0.4\linewidth}
-\includegraphics[width=\linewidth]{bike_static_model_bike}
-\label{fig:bike_diagram}%
+\includegraphics[width=\linewidth]{bike_static_model_bike}%
+\label{fig:bike_diagram}
 \caption{}
 \end{subfigure}
 \begin{subfigure}[b]{0.4\linewidth}
 \includegraphics[width=\linewidth]{bike_static_model_simplified}
-\caption{}
-\label{fig:beam_diagram}%
-\end{subfigure}
-\label{fig:theoretical_models}%
+\caption{}%
+\label{fig:beam_diagram}
+\end{subfigure}%
+\label{fig:theoretical_models}
 \end{figure}
 
 \newpage
@@ -86,8 +86,8 @@ The force distribution on the axles is the most important part of the analysis, 
 determine the deceleration and whether or not the conditions for safe braking are maintained.
 \begin{figure}[H]
 \caption{diagram for calculation of forces on axles}
-\includegraphics[width=\linewidth]{static_forces_simplified}
-\label{fig:static_diagram}%
+\includegraphics[width=\linewidth]{static_forces_simplified}%
+\label{fig:static_diagram}
 \end{figure}
 
 \subsubsection{Cyclist static or moving at constant speed}
@@ -99,8 +99,8 @@ on the axles, we need to equate internal torques to either point A or B in fig.~
 \emph{$F_f l = mg \cdot d, F_f = \frac{mg \cdot d}{l}$}. Because the net force of the system is the weight
 of the rider with the bike, the force on the other axle is \emph{$F_r = mg - F_f$}. \\
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{axles_static_graph}
-\label{fig:static_graph}%
+\includegraphics[width=\linewidth]{axles_static_graph}%
+\label{fig:static_graph}
 \end{figure}
 When we plot these equations as functions of the distance, fig.~\ref{fig:static_graph}\footnote[1]{graph is 
 generated with parameters from the experiment}. The load on the front axle is a linear function with 
@@ -116,20 +116,42 @@ force is acting upon. As mentioned above we are assuming that bicycle and the ri
 Having assume that, we can say that the centre of mass of bike and rider is connected with a virtual lever
 connected at 90 degrees to our main moment arm, which is bike frame (fig.~\ref{fig:theoretical_models}
 \subref{fig:beam_diagram}). Just like before, we need to equate the moments, but in this case, we need to 
-equate them to point C, as we need to include vertical lever (fig. ~\ref{fig:static_diagram}): 
+equate them to point C, as we need to include vertical lever (fig.~\ref{fig:static_diagram}): 
 $F_f * l = mg * d + ma * h, F_f = frac{mg * d + ma * h}{l}$. And just like in previous example, 
 the force in the rear is: $F_r = mg - F_f$.In this case, however, it is possible for forces to be 
-negative (fig~\ref{fig:dynamic_graph}), which makes us segue to the next section.
+negative (fig~\ref{fig:dynamic_graph}).
 \begin{figure}[H]
 \caption{}
-\includegraphics[width=\linewidth]{axles_dynamic_graph}
+\includegraphics[width=\linewidth]{axles_dynamic_graph}%
 \label{fig:dynamic_graph}
 \end{figure}
 
-\section{The effect of the load on axles on braking}
-When considering safe braking in a straight line, we need to focus on two factors: static friction between 
-wheels and the surface and the direction of the force acting on the rear axle~\ref{fig:dynamic_graph}. 
-The static friction between the wheels and the surface dictates the maximum deceleration while braking. We can 
-calculate the maximum braking force without skidding with: $F_b = \mu F$
+\section{Physical explanation of safe braking}
+\subsection{Maintaining rolling of wheels while braking}
+\begin{figure}[H]
+\caption{}
+\includegraphics[width=0.75\textwidth]{wheel_braking_forces}%
+\label{fig:wheel_diagram_1}
+\end{figure}
+The limiting factor for braking without skidding is the maximum frictional force between the tire and the 
+surface, which is calculated by:
+\begin{equation}
+\centering%
+\label{eq:F_ms}
+F_{ms} = F_y \cdot \mu
+\end{equation}
+When the braking force exceeds the maximum frictional force, the wheel locks up. In order to compare braking 
+force with maximum friction, we need to find the braking vector with the same origin as the friction. We do 
+that by equating torques to that point like so:
+\begin{equation}
+\centering%
+\label{eq:F_bw}
+F_b \cdot r_b = F_{bw} \cdot r_w
+\end{equation}
+In figure~\ref{fig:wheel_diagram_1} we are analysing wheel with a disk brake, the other type of brake is 
+V-brake, which clamps down on the rim with rubber pads, which means that the vector $F_b$ in that case would 
+have its origin on the rim. Because of such variations, we will be refering to the braking force in reference 
+to the tire-surface contact point rather than the force between brake pad and braking surface.
 
+\subsection{Keeping rear wheel from lifing off}
 \end{document}
