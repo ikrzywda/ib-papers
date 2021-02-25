@@ -14,7 +14,8 @@ def generate_data(r1,r3,vin):
     y = np.zeros(r1)
   
     for i in range(1, r1):
-        y[i] = v_out((r1 - i),i,r3,vin)
+        y[i] = (5 * i*r3) / ((r1-i)*(i+r3) + i*r3)
+        #y[i] = v_out((r1 - i),i,r3,vin)
 
     return x,y
 

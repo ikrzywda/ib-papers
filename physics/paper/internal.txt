@@ -144,9 +144,7 @@
         to a Python script mapping the unloaded analog values to resistance between
         0 and 50000, and values of loaded potentiometer to voltage between 0 and 5,
         all of which is later plotted into a graph. 
-        (See Appendix A for greater details on the apparatus and software) 
-        Sample of raw data is in Appendix B, however, as the files are on average
-        120 lines, a link to repository is provided for full versions.
+        (See Appendix A for greater details on the apparatus and software)
 
     \subsection{Method}
 
@@ -367,12 +365,6 @@ if __name__ == "__main__":
     plt.savefig(sys.argv[3])
             
         \end{verbatim}
-
-    \subsection*{Appendix B}
-
-        Sample raw data from $32200\Omega$ experiment. Link to repository
-        with full files \url{https://github.com/ikrzywda/experiment_utillities/tree/main/potentiometer_under_load/gathered_data}.
-
 
 \section{Bibliography}
     
