@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[titlepage]{article}
 
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -12,7 +12,14 @@
 \usepackage[margin=0.75in]{geometry}
 \graphicspath{{./assets/}}
 
+\title{Exploring Fourier series from computational perspective}
+\author{Igor Krzywda}
+
 \begin{document}
+
+\maketitle
+\tableofcontents
+\pagebreak
 
 \section{Introduction}
 
@@ -24,7 +31,6 @@
     Since for me the ultimate way of learning is solving problems and since I feel
     best at expressing ideas in code, I decided to set myself a challenge of 
     programming a program that will redraw my sketches with Fourier series.
-
 
 \section{What is Fourier series?}
 
@@ -45,23 +51,23 @@
     stands on its own. It is added before the actual series in order to compensate
     for the original function not oscillating around $x$ axis on the plot. It 
     basically is a vertical translation. We can see it if we add any constant
-    to $sin(x)$~\ref{fig:sine_translation}.
+    to $sin(x)$, Figure~\ref{fig:sine_translation}.
     \begin{figure}[H]
-        \caption{red - $sin(x)$, blue - $3 + sin(x)$}
+        \caption{red : $sin(x)$, blue : $2 + sin(x)$}
         \centering
         \includegraphics[width=0.5\linewidth]{translated_vanilla_sinewave}
         \label{fig:sine_translation}
     \end{figure}
-    Now the problem to solve is what it the axis around which our sum of sines
-    and cosines is to oscillate against. The solution to this problem is the average
+    The problem to solve is to find the axis against which the sum will oscillate
+    The solution to this problem is the average
     value of the original function over one period. The formula given for finding
     $a_0$ goes as follows~\eqref{eq:a0_formula}
     \begin{equation}\label{eq:a0_formula}
         a_0 = \frac{1}{P}\int_{\frac{P}{2}}^{\frac{-P}{2}}f(t)dt
     \end{equation}
-    Now, how does an integral grant us mean value of a function? Well, definite
+    The average can be found through this formula because the 
     integral gives us the area under the graph of function $f(t)$ from 
-    $-\frac{1}{P}$ to $\frac{1}{P}$. If we have an area, we can express it with 
+    $-\frac{P}{2}$ to $\frac{P}{2}$. If we have an area, we can express it with 
     any figure that has this area, since we want an offset from the $x$ axis, 
     we can draw a rectangle whose base has length of $P$. Since we want to find
     out what the height of that rectangle is, we need to divide its area by its
@@ -69,11 +75,9 @@
 
 \subsection{Finding $a_n$ and $b_n$}
 
-    Weights $a_n$ and $b_n$ allow for the series to converge to desired function, 
-    which is quite obvious from the fact that the series is infinite, which means
-    that the values on their own would shoot up to infinity. Now, how are we to 
-    find those weights to force the sinusoids to compliance? We can start with 
-    equating some function $f(t)$ to a Fourier series~\eqref{eq:eq_fs_f(t)}
+    Coefficients $a_n$ and $b_n$ determine the amplitudes of sine waves of frequency
+    $n$. Since the goal is to approximate some function $f(t)$ with a sum of 
+    weighted sines and cosines, let that be the starting point.~\eqref{eq:eq_fs_f(t)}
     \begin{equation} \label{eq:eq_fs_f(t)}
         f(t) = a_0 + \sum_{n=1}^{\infty}a_ncos\frac{2\pi nt}{P} + b_n%
             sin\frac{2\pi nt}{P}
@@ -81,11 +85,11 @@
     In order to find the coefficients, we can exploit the properties of definite
     integrals of sine and cosine. To do that, we will need to expand the whole 
     expression by either $cos\frac{2\pi nt}{P}$ when looking for $a_n$, or by 
-    $sin\frac{2\pi nt}{P}$ if we are looking for $b_n$. Now we will go through 
-    the whole process by looking for $a_n$. 
+    $sin\frac{2\pi nt}{P}$ if we are looking for $b_n$. 
 
+\subsubsection{Finding $a_n$}
 
-    The expanded equation we will use to find $a_n$ looks like this~\eqref{eq:fs_exp_cos}.
+    The expanded equation used to find $a_n$ looks like this~\eqref{eq:fs_exp_cos}.
     \begin{equation}\label{eq:fs_exp_cos}
     \begin{split}
         \int_{-\frac{P}{2}}^{\frac{P}{2}}f(t)cos\frac{2\pi nt}{P}dt 
@@ -97,6 +101,7 @@
         & \vdots \\
         & + \int_{-\frac{P}{2}}^{\frac{P}{2}}a_ncos^2(\frac{2\pi nt}{P})dt +
         \int_{-\frac{P}{2}}^{\frac{P}{2}}b_nsin\frac{2\pi nt}{P}cos\frac{2\pi nt}{P}dt 
+        + ...
     \end{split}
     \end{equation}
     From this rather long expansion we can distill and solve for five cases appearing
@@ -104,40 +109,74 @@
     \begin{enumerate}
         \item \begin{equation*}
                 \int_{-\frac{P}{2}}^{\frac{P}{2}}a_0cos\frac{2\pi nt}{P}dt
-                = a_0 \cdot \left[\frac{P}{2\pi nt}sin\frac{2\pi nt}{P}\right]_{-\frac{P}{2}}^{\frac{P}{2}}
-                = a_0 \cdot \frac{P}{2\pi nt}(sin(\pi n) - sin(-\pi n)) = 0
+                = a_0 \cdot \left[\frac{P}{2\pi n}sin\frac{2\pi nt}{P}\right]_{-\frac{P}{2}}^{\frac{P}{2}}
+                = a_0 \cdot \frac{P}{2\pi n}(sin(\pi n) - sin(-\pi n)) = 0
               \end{equation*}
-        \item let $m \in Z \land m \neq n$
+        \item For $m \in N$ and $m \neq n$
             \begin{equation*}
             \begin{split}
-                \int_{-\frac{P}{2}}^{\frac{P}{2}}a_mcos\frac{2\pi mt}{P}cos\frac{2\pi nt}{P}dt 
-                & = a_m \cdot \int_{-\frac{P}{2}}^{\frac{P}{2}}\frac{1}{2}\left(cos\frac{(m-n)2 \pi t}{P} + 
-                cos\frac{(m+n)2 \pi t}{P}\right)dt \\
-                & = a_m \cdot \left[\frac{P}{4\pi(m-n)}sin\frac{(m-n)2 \pi t}{P}
-                + \frac{P}{4\pi(m+n)}sin\frac{(m+n)2 \pi t}{P}\right]_{-\frac{P}{2}}^{\frac{P}{2}} \\
-                & = a_m \cdot (\frac{P}{4\pi(m-n)}sin((m-n)\pi) + \frac{P}{4\pi(m+n)}sin(-(m+n)\pi) = 0
+                \int_{-\frac{P}{2}}^{\frac{P}{2}} a_mcos \frac{2\pi mt}{P} 
+                cos\frac{2\pi nt}{P} dt %
+                %-------------------------------------------------------------
+                & = a_m \cdot \int_{-\frac{P}{2}}^{\frac{P}{2}} \frac{1}{2} 
+                \left( cos\frac{(m-n)2 \pi t}{P} 
+                + cos\frac{(m+n)2 \pi t}{P} \right) dt \\%
+                %-------------------------------------------------------------
+                & = \frac{a_m}{2} \cdot \left[ \frac{P}{(m-n)2\pi n}
+                sin\frac{(m-n)2 \pi t}{P} + \frac{P}{(m+n)2\pi n} 
+                sin\frac{(m+n)2 \pi t}{P}  \right]_{-\frac{P}{2}}^{\frac{P}{2}} \\%
+                %-------------------------------------------------------------
+                & = \frac{Pa_m}{4\pi} \left( \frac{1}{m-n}sin((m-n)\pi)
+                + \frac{1}{m+n} sin((m+n)\pi) \right. \\
+                & \left. - \frac{1}{m-n} sin(-(m-n)\pi) - \frac{1}{m+n} 
+                sin(-(m+n)\pi) \right) = 0
             \end{split}
             \end{equation*}
-        \item let $m \in Z$
+        \item For $m \in N$ and $m \neq n$
             \begin{equation*}
             \begin{split}
-                \int_{-\frac{P}{2}}^{\frac{P}{2}}b_msin\frac{2\pi mt}{P}cos\frac{2\pi nt}{P}dt 
-                & = b_m \cdot \int_{-\frac{P}{2}}^{\frac{P}{2}}\frac{1}{2}\left(sin\frac{(m+n)2 \pi t}{P} + 
-                sin\frac{(m+n)2 \pi t}{P}\right)dt \\
-                & = b_m \cdot \left[\frac{-P}{4\pi(m+n)}cos\frac{(m+n)2 \pi t}{P}
-                + \frac{-P}{4\pi(m+n)}cos\frac{(m+n)2 \pi t}{P}\right]_{-\frac{P}{2}}^{\frac{P}{2}} \\
-                & = b_m \cdot (\frac{-P}{4\pi(m-n)}cos((m-n)\pi) + \frac{-P}{4\pi(n+m)}cos(-(m+n)\pi) = 0
+                \int_{-\frac{P}{2}}^{\frac{P}{2}} b_msin \frac{2\pi mt}{P} 
+                cos\frac{2\pi nt}{P}dt %
+                %-------------------------------------------------------------
+                & = b_m \cdot \int_{-\frac{P}{2}}^{\frac{P}{2}}\frac{1}{2} 
+                \left(sin\frac{(m+n)2 \pi t}{P} + 
+                sin\frac{(m-n)2 \pi t}{P}\right)dt \\ %
+                %-------------------------------------------------------------
+                & = \frac{b_m}{2} \cdot \left[\frac{-P}{2\pi(m+n)}cos\frac{(m+n)2\pi t}{P}
+                + \frac{-P}{2\pi(m-n)}cos\frac{(m-n)2\pi t}{P}
+                \right]_{-\frac{P}{2}}^{\frac{P}{2}} \\ %
+                %-------------------------------------------------------------
+                & = \frac{Pb_m}{4\pi} \left( \frac{-1}{m+n}cos((m+n)\pi)
+                + \frac{-1}{m-n} cos((m-n)\pi) \right. \\
+                & \left. - \frac{-1}{m+n} cos(-(m+n)\pi) - \frac{-1}{m-n} 
+                cos(-(m-n)\pi) \right) = 0
             \end{split}
             \end{equation*}
         \item 
             \begin{equation*}
             \begin{split}
+                \int_{-\frac{P}{2}}^{\frac{P}{2}} b_nsin \frac{2\pi nt}{P} 
+                cos\frac{2\pi nt}{P}dt %
+                %-------------------------------------------------------------
+                & = b_n \int_{-\frac{P}{2}}^{\frac{P}{2}} \frac{1}{2} \left
+                sin\frac{4\pi nt}{P} + sin(0) \right) dt \\ %
+                %-------------------------------------------------------------
+                & = \frac{b_n}{2} \left[ \frac{-P}{4\pi n}cos\frac{4\pi nt}{P}
+                - cos(0) \right]_{-\frac{P}{2}}^{\frac{P}{2}} \\ %
+                %-------------------------------------------------------------
+                & = \frac{b_n}{2} \left( \frac{-P}{4\pi n}cos(2\pi n) - 1 
+                - \frac{-P}{4\pi n}cos(-2\pi n) + 1 \right) = 0
+            \end{split}
+            \end{equation*}
+        \item
+            \begin{equation*}
+            \begin{split}
                 \int_{-\frac{P}{2}}^{\frac{P}{2}}cos^2(\frac{2\pi nt}{P})dt
                 & = \frac{1}{2}\int_{-\frac{P}{2}}^{\frac{P}{2}}1 + cos\frac{4\pi nt}{P}dt 
-                = \frac{1}{2} \cdot \left[t + \frac{P}{4\pi nt}sin\frac{4\pi nt}{P}
+                = \frac{1}{2} \cdot \left[t + \frac{P}{4\pi n}sin\frac{4\pi nt}{P}
                 \right]_{-\frac{P}{2}}^{\frac{P}{2}} \\
-                & = \frac{1}{2} \cdot \left(\frac{P}{2} + \frac{1}{2\pi n}sin(2\pi n)
-                + \frac{P}{2} + \frac{1}{2\pi n}sin(-2\pi n)\right) = \frac{2}{P}
+                & = \frac{1}{2}\left( \frac{P}{2} - \frac{4\pi n}{P}sin(2\pi n) + 
+                \frac{P}{2} + \frac{4\pi n}{P}sin(-2\pi n)\right) = \frac{P}{2}
             \end{split}
             \end{equation*}
     \end{enumerate}
@@ -230,21 +269,26 @@
 
 \section{Overview of the program} 
 
-    The program has three main stages:
-    \begin{enumerate}
-        \item taking input from the user and mapping it onto complex plane
-        \item processing the input using discrete Fourier transform (DFT)
-        \item redrawing the sketch using complex form of Fourier series
-    \end{enumerate}
+\subsection{Taking input}
+    
+    Input is taken from the user in form of an array of $(X,Y)$ coordinates on 
+    a window prompted using SFML (Simple and Fast Multimedia Library) for C++ 
+    programming language (Figure~\ref{fig:input_window}). If the mouse is 
+    left-clicked and moved, the coordinates
+    are recorded and saved in the array, as well as printed on the window. 
+    \begin{figure}[H]
+        \caption{}
+        \centering
+        \includegraphics[width=0.3\linewidth]{input_window}
+        \label{fig:input_window}
+    \end{figure}
 
-    In this short list we have two completely new concepts and one slightly 
-    mutated, so let us now go through each component in their applied form.
+\subsection{Implementation of complex numbers}
 
-\subsection{Complex numbers}
-
-    A drawing in case of the program is a set of $x$ and $y$ coordinates, however,
-    for all calculations we need something called complex numbers. Akin to points
-    that are desrcibed in terms of coordinates, complex numbers are described in
+    The drawing is a set of points with $x$ and $y$ coordinates, however, all 
+    calculations done in the next stages need to be done on complex numbers.
+    Akin to points that are described in terms of coordinates, complex numbers
+    are also described in terms of
     two dimensions. One of them everyone knows really well, because this is the 
     the real component, which, as the name suggests, consists of real numbers.
     The component that allows us to move vertically does not belong on the real 
@@ -258,24 +302,44 @@
         \includegraphics[width=0.3\linewidth]{imaginary_number}
         \label{fig:complex_number}
     \end{figure}
-    The arithmetics with complex numbers look exactly the same like in case of 
-    any other numbers.
-    
-    It is already apparent why we would use a set complex numbers when trying 
-    to draw instead, for example a function like we did in previous section. 
-    It gives us two dimensions of freedom which is excactly what we need since
-    our sketches will be two-dimensional.
+    The implementation of complex numbers in code is a template structure 
+    containing two fields - real component (\texttt{re}) and imaginary (\texttt{im}).
+    \begin{minted}{C++}
+template <class T>
+struct Complex
+{
+    T re = 0, 
+      im = 0;
+}
+    \end{minted}
+    The most important thing, however, is overloading operators for this structure,
+    which will make later code much more readable. Below is an example of overloading
+    multiplication operator that will be used a lot in later code. The implementation
+    stems from equation~\eqref{eq:complex_mult}
+    \begin{equation}\label{eq:complex_mult}
+        (a + bi) \cdot (c + di) = ac - bd + adi + cbi 
+    \end{equation}
+    \begin{minted}{C++}
+    Complex operator*(Complex n)
+    {
+        Complex t;
 
+        t.re = this->re * n.re - this->im * n.im;
+        t.im = this->re * n.im + this->im * n.re;
+
+        *this = t;
+
+        return *this;
+    };
+    \end{minted}
 
 \subsection{Discrete Fourier transform (DFT)}
 
-    Next step in the program is to find the coefficients for the Fourier series
-    to work with. However, the process will be a bit different since
-    we are working with a set of complex numbers rather than a real-valued function.
-    This is where DFT, or discrete Fouirer transform comes into play. Remember
-    how the coefficients $a_n$ and $b_n$ described the amplitude of sinusoids with
-    frequency of $n$? What Fourier transform does is finding the amplitude of 
-    signals with given frequency. The formula for DFT is as follows~\eqref{eq:dft_vanilla}.
+    Next step in the program is to find the coefficients for the Fourier series.
+    However, the coefficients will be a bit different, since we are working with 
+    a set of complex numbers rather than a function. This means that the series
+    will have a different form, but first we need to find the weights, which can
+    be found using DFT, which is defined by formula~\eqref{eq:dft_vanilla}.
     \begin{equation}\label{eq:dft_vanilla}
         X_k = \sum_{n=0}^{N-1}x_n \cdot \left[cos\left(\frac{2\pi}{N}kn\right) - 
         isin\left(\frac{2\pi}{N}kn\right)\right]
@@ -285,7 +349,8 @@
         \item $X_k$ - output complex number of DFT
         \item $N$ - size of input set
         \item $k$ - frequency
-        \item $x_n$ - $n^{th}$ complex number in the input set
+        \item $x_n$ - $n^{th}$ complex number in the input set $\left\{x_0, x_1,
+            ..., x_{N-1} \right\}$
     \end{itemize}
     
     The first thing to go through is why we are multiplying our input complex 
@@ -293,8 +358,9 @@
 
 \subsubsection{Expressing a point on a unit circle using complex numbers}
 
-    Let us take a right triangle with hypotenuse of length $1$~\ref{fig:right_triangle}
-    and angle $\theta$ between that hypotenuse ($c$) and the base $b$ of triangle.
+    Let us take a right triangle with hypotenuse of length $1$
+    (Figure~\ref{fig:right_triangle})
+    and angle $\theta$ between that hypotenuse ($c$) and the base ($b$) of triangle.
     \begin{figure}[H]
         \caption{}
         \centering
@@ -307,7 +373,7 @@
 
     Now we can inscribe such right triangle into a unit circle on a complex plane
     where the hypotenuse of the triangle would simultaneusly be the radius of 
-    the triangle~\ref{fig:inscribed_triangle} with some angle $\theta$ between
+    the triangle (Figure~\ref{fig:inscribed_triangle}) with some angle $\theta$ between
     radius and the horizontal axis.
     \begin{figure}[H]
         \caption{}
@@ -319,63 +385,90 @@
     using the inscribed triangle, so $cos\theta$ would be the horizontal coordinate
     and $i \cdot sin\theta$ would be the vertical component since we are on complex
     plane. So the whole position can be described as $cos\theta + isin\theta$.
+    Conversly, if $cos\theta + isin\theta$ are plotted for every $\theta$ between
+    $0$ and $2\pi$, we get the same unit circle - Figure~\ref{fig:unit_circle}
 
 
-\subsubsection{The crux of DFT matter}
-
-    Now, having the basis, we can go through the DFT inductively. Let us find 
-    Fourier transform for $cos(2t)$. We already know that the expression 
-    $cos\left(\frac{2\pi}{N}kn\right) - isin\left(\frac{2\pi}{N}kn\right)$ describes
-    unit circle on a complex plane. What we are doing with DFT mapping our input
-    set around this unit circle - Figure~\ref{fig:cos_wrapped}. In plot $(b)$ we
-    can see the heart of Fouerier transform. Since we are summing all numbers in 
-    the set, and, as we can see, the plot is symmetrical, so all the values will 
-    cancel out, leaving us with 0.
+\subsubsection{Applying Discrete Fourier Transform}
+    
+    The formula for DFT is a sum, however in order to visualize what is happening
+    when applying DFT to a set of values, we will plot all values that are being
+    summed, as well as the average of this sum (an average is taken normally when
+    applying Fourier series, however, it can also be done during DFT, which will
+    aid the readibility of the plots).
+    Let us apply Discrete Fourier Transform to an easy-to-
+    visualize example. We will plot all results from expression~\eqref{eq:mapping}
+    \begin{equation}\label{eq:mapping}
+        x_n \cdot \left[cos\left(\frac{2\pi}{N}kn\right) - isin\left(
+            \frac{2\pi}{N}kn\right)\right]
+    \end{equation}
+    where $x_n$ are the elements of set, which is a discrete
+    form of $cos(2\theta)$ from $0$ to $2\pi$, and $k$ (or frequency) is $1$, which 
+    means that all values will be mapped within one revolution around the unit circle
+    (Figure~\ref{fig:cos_wrapped}, where subfigure~\ref{subfig:cos_2t} is the plot
+    of set $x$ and subfigure~\ref{subfig:cos_2t_wrapped} is the plot of results)
+    of the expression~\eqref{eq:mapping}
     \begin{figure}[H]
       \caption{}\label{fig:cos_wrapped}
       \centering
-        \subfloat[$cos(2t)$]{\includegraphics[width=0.4\textwidth]{cos_vanilla}}
+        \subfloat[$cos(2t)$]{%
+            \includegraphics[width=0.4\textwidth]{cos_vanilla}%
+            \label{subfig:cos_2t}%
+            }
       \hfill
-        \subfloat[$cos(2t)$ - wrapped]{\includegraphics[width=0.4\textwidth]{cos_wrapped}}
+        \subfloat[$cos(2t)$ - wrapped]%
+            {\includegraphics[width=0.4\textwidth]{cos_wrapped}%
+            \label{subfig:cos_2t_wrapped}%
+            }
     \end{figure}
-    However, if we map the values to a circle with matching frequency $k$, we 
-    observe something interesting - Figure~\ref{fig:cos_wrapped_2k}. All values
-    have moved to one side, so now, if we sum all the values, we get a complex
-    number. In the case of cosine, the result is real, which means that we 
-    the function consists of a sinewave with $0$ phase change and amplitude of
-    $1$ (the raw results from DFT have to be divided by $N$ to get representation
-    below and by $2N$ to get the real amplitude).
+    In plot~\ref{subfig:cos_2t_wrapped} we can see that the values have aligned
+    in a shape that is symmetric about real (horizontal) and imaginary (vertical)
+    axes, which means for every element in the set, there is another one, which
+    has an inverse value, which, after summing all values gives zero. 
+
+
+    If we do the same operation, but now we change $k$ to match the frequency of
+    the input, which is $2$, as the function $cos(2t)$, that the input set is a discrete
+    form of, completes two cycles in one period. If we plot all of those values
+    along with the average of the sum, we get what is shown in 
+    Figure~\ref{fig:cos_wrapped_2k}.
     \begin{figure}[H]
         \caption{}
         \centering
         \includegraphics[width=0.4\linewidth]{cos_wrapped_2k}
         \label{fig:cos_wrapped_2k}
     \end{figure}
-    If we wrap $sin(2t)$ the same way, we will see that we will have the phase
-    change represented by the complex component - Figure~\ref{fig:sin_wrapped_2k}.
-    This should make intuitive sense, because we saw that cosine function starts
-    at completely horizontal position and the sine starts from completely vertical
-    position. 
-    \begin{figure}[H]
-        \caption{}
-        \centering
-        \includegraphics[width=0.4\linewidth]{sin_wrapped_2k}
-        \label{fig:sin_wrapped_2k}
-    \end{figure}
-    We can already see that we will use DFT to set radii and initial positions
-    of our ``circles'' that will spin at $k$ frequencies. Before that let us have
-    one last bit of fun with DFT and decompose a function with more than one 
-    component sine wave, say $f(t) = cos(10t) + cos(20t) + sin(25t)$, which looks
-    like in Figure~\ref{fig:composed}. Now, all we have to do is apply Fourier
-    transform.
+    The shape that the values formed in this case is different, as it is only 
+    symmetric horizontally, which means that the imaginary components will cancel
+    out, whereas the real components will give a non-zero value, which, after
+    taking the average is in the center of this shape.
+
+
+    The results of DFT tell how much present a component that can be described as
+    $cos\left(\frac{2\pi}{N}kn\right) - isin\left( \frac{2\pi}{N}kn\right)$ is 
+    in the set. The concrete values are used later on in phase where Fourier 
+    series is used.
+
+
+    We can, however, take a look how the values will align when we will be applying
+    DFT to sets that are a discrete form of sum of sinusoids. This is one of the 
+    most important uses of DFT, as sound signals are composed of many sine waves 
+    with different frequencies and DFT allows for finding those frequencies. 
+    As an example we shall take a function $f(t) = cos(10t) + cos(20t) + sin(25t)$, 
+    whose plot is shown in Figure~\ref{fig:composed}. We can expect non-zero 
+    values for $k = {10,20,25}$.
+
     \begin{figure}[H]
         \caption{}
         \centering
         \includegraphics[width=0.4\linewidth]{composed}
         \label{fig:composed}
     \end{figure}
-    Here are plots of our function mapped to the unit circle with following
-    frequencies: $1, 10, 20, 25$, where the dot signifies the sum mapped with 
+    Below, in Figure\ref{fig:step_fs_plots} we can see the plots of all elements
+    of input set multiplied by $cos\left(\frac{2\pi}{N}kn\right) - isin\left( 
+    \frac{2\pi}{N}kn\right)$. $k$ in the
+    captions shows the value of $k$ used in the expression and the dots in the
+    plots are the averages of the results of DFT.
     $\frac{1}{N}$
     \begin{figure}[H]
     \caption{}
@@ -387,12 +480,15 @@
     \end{tabular}
     \label{step_fs_plots}
     \end{figure}
+    We can see that for values of $k$ that correspond to the frequencies of the
+    sinusoids making up the original function, the plots bias towards one side,
+    which causes the sums of all those values to be bigger than zero.
     
     See Appendix B for source code of script used to generate all plots above.
 
 \subsubsection{Why naive implementation of DFT is inefficient}
 
-    Now we can take a look at how DFT is implemented in C++.
+    Below is implementation of DFT that is inside the source code of the program.
 
     \begin{minted}{C++}
 
@@ -408,8 +504,7 @@ C_set *DFT(C_set input)
         for (unsigned n = 0; n < N; ++n)
         {
             x = a * n * k;
-            temp.re = cos(x);
-            temp.im = -sin(x);
+            temp = C(cos(x), -sin(x));
 
             X_k += (temp * input[n]);
         }
@@ -422,42 +517,72 @@ C_set *DFT(C_set input)
 }
     \end{minted}
 
-    The function takes set of complex numbers which is our drawing and calculates
-    coefficients for frequencies from $0$ to $N-1$. Of course this number could
-    be arbitrarly high, but $N$ seems to do the trick. The algorithm is a direct
-    implementation of the formula and the source of inefficiency is in the two
-    nested for loops that go from $0$ to $N$. What this means is that the algorithm
-    has the time complexity of $O(N^2)$, which means that supplied set of $N$ elements,
-    the computer will always perform $N^2$ operations because the function does
-    not contain any break statements which could add best and worst case scenario
-    to the considerations. In real world, this algorithm is rarely used, as it has
-    its much more efficient counterpart - 
-    Fast Fourier Transform (FFT), which has the 
-    complexity of $O(Nlog(N))$ which is significantly faster than $O(N^2)$, but 
-    since the program is made as a bit of fun, we can live with poor efficiency.
-    
-
+    Inside the function there are two for loops. The first one iterates through
+    frequencies ($k$) as we want more coefficients than for one frequency. The 
+    inner loop is the exact implementation of the formula for DFT, where all terms
+    from the input set are multiplied by $cos\left(\frac{2\pi}{N}kn\right) - isin\left( 
+    \frac{2\pi}{N}kn\right)$ and added together to compute the coefficient for 
+    frequency $k$. This is also the source of the inefficiency of this algorithm.
+    Because there are two nested loops that go from $0$ to $N-1$, the time complexity
+    of this algorithm is $\mathcal{O}(n^2)$, which means that given an input of 
+    size $n$, the computer will make $n^2$ operations. This is very inefficient
+    and slow for real-life applications of DFT, as the sizes of inputs for those
+    applications can get very big. For example, a WAV file containing 1 second of
+    audio signal has $44'100$ samples. Processing a short song would take a lot
+    of computing resources. This is why in most actual implementations of DFT,
+    an algorithm called Fast Fourier Transform (FFT) is used, whose time complexity
+    is $\mathcal{O}(n\log(n))$.
 
 \subsection{Fourier series and making drawings}
 
-    At this point we have a set of complex numbers describing our sketch in terms
-    of frequency and we have to come back to time domain. To do that we use inverse
-    discrete Fourier transform (IDFT), which might as well be called discrete 
-    Fourier series. Akin to approximating step function in section 2, we have 
-    a bunch of weights on our hands and all we have to do is apply them to what
-    we will now call our rotating circles - epicycles. DFT gives us two pieces
-    of information about each frequency - how big is the epicycle and where is
-    starts. The formula for IDFT is as follows~\eqref{eq:IDFT}
+    The last stage of the program is to recreate the original drawing using the
+    inverse discrete Fourier transform (IDFT), which is the same as discrete
+    Fourier series\footnote{terms IDFT and discrete Fourier series will be used
+    interchangeably in this section}. The formula is given in equation~\eqref{eq:IDFT}.
     \begin{equation}\label{eq:IDFT}
-        x_n = \frac{1}{N}\sum_{n=0}^{N-1}X_k \cdot \left[cos\left(\frac{2\pi}{N}kn\right) +
+        x_n = \frac{1}{N}\sum_{k=0}^{N-1}X_k \cdot \left[cos\left(\frac{2\pi}{N}kn\right) +
         isin\left(\frac{2\pi}{N}kn\right)\right]
     \end{equation}
-    Notice that what we are doing is applying Fourier transform to Fourier transform.
-    The $\frac{1}{N}$ weight is the same weight we applied when depicting DFT.
-    Now, having all tools needed, we can take a look at the code. Our goal is to
-    control the number of terms. Provided that number, we can calculate the set 
-    making up our drawing by adding $n$ for every angle from $0$ to $2\pi$. 
-    Below is function called \textit{draw IDFT}, which does just that.
+    If we compare formula for IDFT~\eqref{eq:IDFT} to the formula for Fourier
+    series from section 2~\eqref{eq:fs_2}, we can see the same concept in different
+    executions.
+    \begin{equation} \label{eq:fs_2}
+        S_\infty(t) = a_0 + \sum_{n=1}^{\infty}a_ncos\frac{2\pi nt}{P} + b_n%
+            sin\frac{2\pi nt}{P}
+    \end{equation}
+    Inside both series a form of sinusoid is being multiplied by some coefficient.
+    In the case of real form of Fourier series, an amplitude of a sine wave with
+    a certain frequency is being regulated. In case of IDFT, where the coefficient
+    is a complex number, the weight not only regulates the amplitude of the complex
+    sinusoid $cos\left(\frac{2\pi}{N}kn\right) + isin\left(\frac{2\pi}{N}kn\right)$,
+    but also its phase shift, which can be better explained pictorially.
+    In Figure~\ref{fig:idft_expl_1} we can see a term from a series whose coefficient
+    is $\frac{1}{N}X_k = 3+4i$. In the plot, the circle is the path that this 
+    term would have made over the whole period, whereas the line from the center
+    to a point on a circumference of the circle is the starting point. The radius
+    of this circle is the hypotenuse of the triangle formed by the real and imaginary
+    component of the term. The phase shift is angle $\theta$. 
+    \begin{figure}[H]
+        \caption{}
+        \centering
+        \includegraphics[width=0.4\linewidth]{dfs_explainer_1}
+        \label{fig:idft_expl_1}
+    \end{figure} 
+    Because complex numbers are being added in the series, a good way to visualize
+    this operation is by seeing complex numbers as lines that are ``glued'' together
+    by their ends like in Figure~\ref{fig:complex_sum}. In this way we can visualize
+    IDFT, where each of those lines rotate with frequency $k$, and the tip of the
+    last term is the computed element of set $X_n$.
+    \begin{figure}[H]
+        \caption{}
+        \centering
+        \includegraphics[width=0.4\linewidth]{complex_sum}
+        \label{fig:complex_sum}
+    \end{figure} 
+
+\subsubsection{Implementation of IDFT in code}
+
+    Below is an implementation of IDFT in the source code of the program.
     \begin{minted}{C++}
 void draw_IDFT(C_set &x_k, VertexArray &drawing, unsigned n)
 {
@@ -480,41 +605,42 @@ void draw_IDFT(C_set &x_k, VertexArray &drawing, unsigned n)
     }
 }
     \end{minted}
-    If we go look at the code, it looks very similar to DFT implementation complete
-    with that doubly nested loops. Starting from the top for loop, we have variable
-    $t$, which is there to iterate over the full range, so in other terms - make 
-    one full revolution at frequency $1$. The next loop is what allows us to observe
-    the convergence to our input. Variable $k$, consistent with previous variable-
-    naming is our frequency. Inside the loop, we are calculating the angle at which
-    epicycle revolving at frequency $k$ is, after which we express it as a complex
-    number in variable $temp$ to finally calculate its position using IDFT. We
-    are adding the terms to $x_n$, since we want the outline rather than path of 
-    each epicycle. Having calculated $x_n$, we add it to the buffer holding points
-    making up our drawing. Rince and repeat.
 
-\section{Drawings}
+    The function takes a set of coefficients computed by DFT function (\texttt{x\_k}),
+    an array of coordinates to be put on the screen (\texttt{drawing}) and a variable
+    \texttt{n}, which allows for controlling how many terms are being added in the 
+    series. The upper for loop iterates over one period in $N-1$ steps in order
+    to get coordinates for a full period. The inner loop iterates from $0$ to $n$
+    so that the user can regulate the number of arguments being added in the series
+    and inside this loop is a direct implementation of IDFT. At the bottom, the 
+    complex number \texttt{x\_n} is converted to coordinates that work with SFML 
+    and is saved to the \texttt{drawing} array. 
 
-    This moment might be somewhat anticlimactic, since the program works best as
-    a kind of animation, I will leave link to code repository complete with 
-    instructions to compile the program. In this paper, however I will show off
-    some simpler sketches that converge fast so that we can see it well without
-    perusing a 100-page document containing every frame. 
+\subsubsection{Inductive example of IDFT using the program}
 
-\subsection{Triangle}
 
     \begin{figure}[H]
     \centering
     \caption{}
     \begin{tabular}{ccc}
-    \subfloat[original input]{\includegraphics[width=0.3\linewidth]{fd_triangle_input}} &
-    \subfloat[n = 2]{\includegraphics[width=0.3\linewidth]{fd_triangle_1}} &
-    \subfloat[n = 15]{\includegraphics[width=0.3\linewidth]{fd_triangle_2}}\\
-    \subfloat[n = 239]{\includegraphics[width=0.3\linewidth]{fd_triangle_3}} &
-    \subfloat[n = 314]{\includegraphics[width=0.3\linewidth]{fd_triangle_4}} &
-    \subfloat[n = 322]{\includegraphics[width=0.3\linewidth]{fd_triangle_6}} 
+    \subfloat[original input]{\includegraphics[width=0.3\linewidth]{fd_triangle_input}}\label{fig:triangles_1} &
+    \subfloat[n = 2]{\includegraphics[width=0.3\linewidth]{fd_triangle_1}}\label{fig:triangles_2} &
+    \subfloat[n = 15]{\includegraphics[width=0.3\linewidth]{fd_triangle_2}}\label{fig:triangles_3}\\
+    \subfloat[n = 239]{\includegraphics[width=0.3\linewidth]{fd_triangle_3}}\label{fig:triangles_4} &
+    \subfloat[n = 314]{\includegraphics[width=0.3\linewidth]{fd_triangle_4}}\label{fig:triangles_5} &
+    \subfloat[n = 322]{\includegraphics[width=0.3\linewidth]{fd_triangle_6}}\label{fig:triangles_6} 
     \end{tabular}
     \label{fig:triangles}
     \end{figure}
+
+\section{Drawings}
+
+    Below are sample examples of the program working. A few frames from the 
+    program have been picked in order to best depict the working of both program
+    and discrete Fourier series.
+
+\subsection{Triangle}
+
     
 \subsection{Cube}
 
@@ -550,7 +676,75 @@ void draw_IDFT(C_set &x_k, VertexArray &drawing, unsigned n)
 
 \section{Appendices}
 
-\subsection*{Appendix A}
+\subsection{Appendix A}
 
+\subsection{Appendix B}
+
+    Python script used to generate plots of functions mapped to unit circle.
+
+    \begin{minted}{Python}
+def wrap_function(func_in, freq):
+
+    N = len(func_in)
+    data = np.zeros(N, dtype = np.complex_)
+    theta = (6.28 / N) * freq
+    coeff = complex(0,0)
+
+    for n in range(0, N):
+        c = complex(m.cos(theta * n), -(m.sin(theta * n)))
+        data[n] = func_in[n] * c
+        coeff += data[n]
+
+    coeff /= N
+
+    return (data, coeff)
+
+
+def plot_complex(data, name):
+
+    plt.plot(data[0].real, data[0].imag)
+    plt.scatter(data[1].real, data[1].imag)
+    plt.axhline(y=0, color='k')
+    plt.axvline(x=0, color='k')
+    plt.savefig(sys.argv[1])
+
+    plt.show()
+    \end{minted}
+
+    Modules needed to run the script:
+    \begin{itemize}
+        \item numpy
+        \item matplotlib
+        \item math
+    \end{itemize}
+
+\subsection{Appendix C}
+
+    \paragraph{Prerequisites}
+    \begin{itemize}
+        \item gcc / Clang / LLVM compiler for C++11 and higher
+        \item SFML media library
+    \end{itemize}
+
+    \paragraph{Compilation and use guide for Fourier drawer program for UNIX machines:}
+    \begin{enumerate}
+        \item Clone git repository to your machine from the link:
+            \url{https://github.com/ikrzywda/fourier\_drawer}
+        \item change directory to \texttt{fourier\_drawer/drawer}
+        \item use \texttt{make} to compile the program
+        \item type \texttt{./fourier\_drawer} inside \texttt{drawer} directory to launch
+            the program
+    \end{enumerate}
+
+    \paragraph{Controls}
+    \begin{itemize}
+        \item \textbf{left mouse button} to draw inside Fourier sketchpad window
+        \item \textbf{Enter} to accept input given in Fourier sketchpad window
+            and to terminate the program when in Fourier drawer window
+        \item \textbf{K} to increase the number of arguments in Fourier drawer 
+            window
+        \item \textbf{J} to decrease the number of arguments in Fourier drawer 
+            window
+    \end{itemize}
 
 \end{document}
