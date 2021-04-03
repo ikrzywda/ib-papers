@@ -53,7 +53,7 @@
     basically is a vertical translation. We can see it if we add any constant
     to $sin(x)$, Figure~\ref{fig:sine_translation}.
     \begin{figure}[H]
-        \caption{red : $sin(x)$, blue : $2 + sin(x)$}
+        \caption{red : $sin(x)$, blue : $1 + sin(x)$}
         \centering
         \includegraphics[width=0.5\linewidth]{translated_vanilla_sinewave}
         \label{fig:sine_translation}
@@ -197,6 +197,48 @@
         b_n = \frac{2}{P}\int_{-\frac{P}{2}}^{\frac{P}{2}}f(t)sin\frac{2\pi nt}{P}dt
     \end{equation}
 
+\subsection{Even and odd functions in context of Fourier series}
+
+    Last thing that will improve the efficiency with which coefficients can be
+    computed is recognizing the fact whether the input function is an even or odd
+    one. Even function can be described as $f(t) = f(-t)$ and an odd function can
+    be described as $f(t) = -f(-t)$. This fact is important in integration, as there
+    are formulas describing definite integrals of even and odd functions over an
+    interval $[-a,a]$, which we are doing when computing the coefficients. The 
+    definite integral for an even function $g(t)$ is in equation~\eqref{eq:int_even_func}.
+    \begin{equation}\label{eq:int_even_func}
+        \int_{-a}^{a}g(t)dt = 2\int_{-a}^{a}g(t)dt
+    \end{equation}
+    Definite integral for an odd function $h(t)$ is given in~\eqref{eq:int_odd_func}.
+    \begin{equation}\label{eq:int_odd_func}
+        \int_{-a}^{a}h(t)dt = 0
+    \end{equation} 
+    \\
+    In context of Fourier series this is very useful, because if we look at sine
+    and cosine functions, we can say that they are odd and even respectively:
+    \begin{itemize}
+        \item $sin(\theta) = -sin(-\theta)$
+        \item $cos(\theta) = cos(-\theta)$ 
+    \end{itemize}
+    If the input
+    function $f(t)$ is either even or odd, we need to pay attention to how
+    the functions that describe $a_n$ and $b_n$ look like, because if this function
+    is odd, we can establish from the start that is is zero. If both functions
+    are the same in terms of being even or odd, then the product function will
+    be even. If one function is even and other is odd, however, then the product
+    function will be odd. Coming back to Fourier series, if we are computing 
+    coefficients $a_n$ and $b_n$, we can state that:
+    \begin{itemize}
+        \item if function $f(t)$ is even, then
+            \begin{equation*}
+                b_n = \frac{2}{P}\int_{-\frac{P}{2}}^{\frac{P}{2}}f(t)sin\frac{2\pi nt}{P}dt = 0
+            \end{equation*}
+        \item if function $f(t)$ is odd, then
+            \begin{equation*}
+                a_n = \frac{2}{P}\int_{-\frac{P}{2}}^{\frac{P}{2}}f(t)cos\frac{2\pi nt}{P}dt = 0
+            \end{equation*}
+        \end{itemize}
+
 \subsection{Approximating a step function}
     
     Before diving straight to other concepts and the drawings, let us 
@@ -221,22 +263,19 @@
         \label{fig:step_func}
     \end{figure} 
 
+    The function $f(t)$ is odd, so we only need to calculate coefficients $b_n$, as
+    we know that all weights $a_n$ will amount to zero.
 
-    If we look on the graph, we can already establish that the definite integral
-    of the function over the whole period is zero, hence $a_0 = 0$. \\
-
-
-    Other thing we want to observe is that the function $f(t)$ is odd, meaning
-    that \textbf{$f(t) = -f(-t)$} and the function that is odd in our series is
-    the sine, we know that all coefficients $a_n$ will be zero because otherwise
-    they would distort our approximation.
     \begin{equation}
     \begin{split}
-        b_n & = \frac{2}{\pi}\int_{-\pi}^{\pi}f(t)sin(nt)dt 
-        = \frac{2}{\pi} \cdot \left[f(t)\cdot t \cdot \frac{1}{-nt}cos(nt)\right]_{-\pi}^{\pi} \\
-        & = \frac{2}{\pi} \cdot \left[\frac{2}{n}\left(cos(n\pi) + cos(n\pi)
-        - (-cos(-(n\pi) + cos(-n\pi) \right)\right] \\
-        & = \frac{4}{n\pi}\left(2cos(n\pi) + 2cos(-n\pi)\right) = 
+        b_n & = \frac{2}{2\pi}\int_{-\pi}^{\pi}f(t)sin(nt)dt 
+        = \frac{1}{\pi}\int_{-\pi}^{0}\frac{2}{n}cos(nt) + 
+        \frac{1}{\pi}\int_{0}^{\pi}\frac{-2}{n}cos(nt) \\
+        & = \frac{2}{\pi n}\left(\left[cos(nt) \right]_{-\pi}^{0}
+        - \left[cos(nt) \right]_{0}^{\pi} \right) \\
+        & = \frac{2}{\pi n}\left(cos(0) - cos(-n\pi) - cos(n\pi) + cos(0)\right) \\
+        & = \frac{2}{\pi n}\left(2 - 2cos(n\pi)\right) 
+        = \frac{4}{\pi n}\left(1 - cos(n\pi)\right) = 
         \begin{cases} 
             & \frac{8}{n\pi} \text{ if n is odd} \\
             & 0 \text{ if n is even}
@@ -244,7 +283,7 @@
     \end{split}
     \end{equation}
     
-    The series for our step function looks like this~\eqref{eq:step_fs}
+    The series for our step function looks like this~\eqref{eq:step_fs}.
     \begin{equation}\label{eq:step_fs}
         S_\infty(t) = \sum_{n=1}^{\infty}\frac{8}{(2n-1)\pi}sin((2n - 1)t)
     \end{equation}
@@ -262,9 +301,10 @@
     \label{step_fs_plots}
     \end{figure}
 
-    We now know what the pure form of Fourier series is, but now we need to use it to
-    draw images, so from now on, we will keep on walking through all the concepts, 
-    but in the context of the program itself.
+    In the plots above we can clearly see the convergence of the series to the
+    function $f(t)$, however the series does not converge well to points at
+    $-\pi$, $0$ and $\pi$, which shows that the approximations done with Fourier
+    series are not fully precise.
 
 
 \section{Overview of the program} 
@@ -373,7 +413,7 @@ struct Complex
 
     Now we can inscribe such right triangle into a unit circle on a complex plane
     where the hypotenuse of the triangle would simultaneusly be the radius of 
-    the triangle (Figure~\ref{fig:inscribed_triangle}) with some angle $\theta$ between
+    the circle (Figure~\ref{fig:inscribed_triangle}) at angle $\theta$ between
     radius and the horizontal axis.
     \begin{figure}[H]
         \caption{}
@@ -381,12 +421,12 @@ struct Complex
         \includegraphics[width=0.4\linewidth]{inscribed_triangle}
         \label{fig:inscribed_triangle}
     \end{figure}
-    We can find the coordinate of the point where the radius touches the circumference
+    We can find the complex value for the point where the radius touches the circumference
     using the inscribed triangle, so $cos\theta$ would be the horizontal coordinate
     and $i \cdot sin\theta$ would be the vertical component since we are on complex
     plane. So the whole position can be described as $cos\theta + isin\theta$.
     Conversly, if $cos\theta + isin\theta$ are plotted for every $\theta$ between
-    $0$ and $2\pi$, we get the same unit circle - Figure~\ref{fig:unit_circle}
+    $0$ and $2\pi$, we get an unit circle on a complex plane.
 
 
 \subsubsection{Applying Discrete Fourier Transform}
@@ -543,42 +583,71 @@ C_set *DFT(C_set input)
         x_n = \frac{1}{N}\sum_{k=0}^{N-1}X_k \cdot \left[cos\left(\frac{2\pi}{N}kn\right) +
         isin\left(\frac{2\pi}{N}kn\right)\right]
     \end{equation}
-    If we compare formula for IDFT~\eqref{eq:IDFT} to the formula for Fourier
-    series from section 2~\eqref{eq:fs_2}, we can see the same concept in different
-    executions.
-    \begin{equation} \label{eq:fs_2}
-        S_\infty(t) = a_0 + \sum_{n=1}^{\infty}a_ncos\frac{2\pi nt}{P} + b_n%
-            sin\frac{2\pi nt}{P}
-    \end{equation}
-    Inside both series a form of sinusoid is being multiplied by some coefficient.
-    In the case of real form of Fourier series, an amplitude of a sine wave with
-    a certain frequency is being regulated. In case of IDFT, where the coefficient
-    is a complex number, the weight not only regulates the amplitude of the complex
-    sinusoid $cos\left(\frac{2\pi}{N}kn\right) + isin\left(\frac{2\pi}{N}kn\right)$,
-    but also its phase shift, which can be better explained pictorially.
-    In Figure~\ref{fig:idft_expl_1} we can see a term from a series whose coefficient
-    is $\frac{1}{N}X_k = 3+4i$. In the plot, the circle is the path that this 
-    term would have made over the whole period, whereas the line from the center
-    to a point on a circumference of the circle is the starting point. The radius
-    of this circle is the hypotenuse of the triangle formed by the real and imaginary
-    component of the term. The phase shift is angle $\theta$. 
+    In discrete Fourier series, the means of coefficients acquired through DFT 
+    ($\frac{1}{N}X_k$) are used like weights $a_0$, $a_n$ and $b_n$ in case of 
+    real form of Fourier series discussed in section 2. We already know that 
+    expression $cos\theta + isin\theta$ returns complex value that represents a
+    position at angle $\theta$ on a unit circle on a complex plane. The mean of
+    the coefficient $X_k$ regulates the radius and phase of such circle. In figure
+    ~\ref{fig:dfs_explainer_1}, there is one such circle multiplied by $3+4i$. We can
+    see that the radius of this circle is the hypotenuse of right triangle formed
+    by real and imaginary component of the complex number. Angle $\theta$ on the
+    plot is the phase shift caused by the term $3+4i$, which we can think of as
+    the point from which the circle is drawn. Now, even though we are 
+    dealing with discrete values in IDFT, the values will ``rotate''
+    as $n$ increases - Figure~\ref{fig:dfs_explainer_2}. Additionally, each term 
+    has its $k$, which is the frequency, in this case meaning that values ``rotate''
+    $k$ times within one period.
     \begin{figure}[H]
-        \caption{}
-        \centering
-        \includegraphics[width=0.4\linewidth]{dfs_explainer_1}
-        \label{fig:idft_expl_1}
-    \end{figure} 
+      \caption{}\label{fig}
+      \centering
+        \subfloat[]{%
+            \includegraphics[width=0.4\linewidth]{dfs_explainer_1}%
+            \label{fig:dfs_explainer_1}%
+            }
+      \hfill
+        \subfloat[]%
+            {\includegraphics[width=0.5\linewidth]{dfs_explainer_2}%
+            \label{fig:dfs_explainer_2}%
+            }
+    \end{figure}
     Because complex numbers are being added in the series, a good way to visualize
-    this operation is by seeing complex numbers as lines that are ``glued'' together
-    by their ends like in Figure~\ref{fig:complex_sum}. In this way we can visualize
-    IDFT, where each of those lines rotate with frequency $k$, and the tip of the
-    last term is the computed element of set $X_n$.
+    this operation is by seeing complex numbers as lines that are ``attached'' together
+    by their ends like in Figure~\ref{fig:complex_sum}. Then, in the context of 
+    IDFT, we can think that each of those lines ``rotate'' by $\frac{2\pi}{N}k$ as we 
+    compute the next term - Figure~\ref{fig:dfs_explainer_3}. 
+    \begin{figure}[H]
+      \caption{}\label{f}
+      \centering
+        \subfloat[]{%
+            \includegraphics[width=0.5\linewidth]{complex_sum}%
+            \label{fig:complex_sum}%
+            }
+      \hfill
+        \subfloat[]%
+            {\includegraphics[width=0.5\linewidth]{dfs_explainer_3}%
+            \label{fig:dfs_explainer_3}%
+            }
+    \end{figure}
+    Since the plot is merely a representation of all terms summed in the series,
+    the output value $x_n$ is at the end of each of collection of lines representing
+    complex numbers. If we now plot the values returned by discrete Fourier 
+    series with the same coefficients (Figure~\ref{fig:dfs_explainer_4}), we can 
+    see some shape - and such shapes will be the drawings generated by the 
+    program.
     \begin{figure}[H]
         \caption{}
         \centering
-        \includegraphics[width=0.4\linewidth]{complex_sum}
-        \label{fig:complex_sum}
-    \end{figure} 
+        \includegraphics[width=0.5\linewidth]{dfs_explainer_4}
+        \label{fig:dfs_explainer_4}
+    \end{figure}
+    One last thing to point out is that, like in case of real form of Fourier
+    series, the more terms we add, the closer the ouptut will converge to the 
+    input. So what the program does to visualize this convergence is it simply
+    regulates the number of terms in the series, however this will be presented
+    in the renders from the program.
+    \paragraph{See Appendix C for the script used to generate all plots in the 
+    section}
 
 \subsubsection{Implementation of IDFT in code}
 
@@ -615,32 +684,31 @@ void draw_IDFT(C_set &x_k, VertexArray &drawing, unsigned n)
     and inside this loop is a direct implementation of IDFT. At the bottom, the 
     complex number \texttt{x\_n} is converted to coordinates that work with SFML 
     and is saved to the \texttt{drawing} array. 
+    \paragraph{See Appendix D for instructions to compile the program on UNIX
+    machine}
 
-\subsubsection{Inductive example of IDFT using the program}
+\section{Drawings}
 
+    Below are sample examples of the program working. A few frames from the 
+    program have been picked in order to best depict the working of both program
+    and discrete Fourier series. $N$ in the top-left corner is the size of set
+    containing DFT coefficients.
+
+\subsection{Triangle}
 
     \begin{figure}[H]
     \centering
     \caption{}
     \begin{tabular}{ccc}
     \subfloat[original input]{\includegraphics[width=0.3\linewidth]{fd_triangle_input}}\label{fig:triangles_1} &
-    \subfloat[n = 2]{\includegraphics[width=0.3\linewidth]{fd_triangle_1}}\label{fig:triangles_2} &
-    \subfloat[n = 15]{\includegraphics[width=0.3\linewidth]{fd_triangle_2}}\label{fig:triangles_3}\\
-    \subfloat[n = 239]{\includegraphics[width=0.3\linewidth]{fd_triangle_3}}\label{fig:triangles_4} &
-    \subfloat[n = 314]{\includegraphics[width=0.3\linewidth]{fd_triangle_4}}\label{fig:triangles_5} &
-    \subfloat[n = 322]{\includegraphics[width=0.3\linewidth]{fd_triangle_6}}\label{fig:triangles_6} 
+    \subfloat[k = 2]{\includegraphics[width=0.3\linewidth]{fd_triangle_1}}\label{fig:triangles_2} &
+    \subfloat[k = 15]{\includegraphics[width=0.3\linewidth]{fd_triangle_2}}\label{fig:triangles_3}\\
+    \subfloat[k = 239]{\includegraphics[width=0.3\linewidth]{fd_triangle_3}}\label{fig:triangles_4} &
+    \subfloat[k = 314]{\includegraphics[width=0.3\linewidth]{fd_triangle_4}}\label{fig:triangles_5} &
+    \subfloat[k = 322]{\includegraphics[width=0.3\linewidth]{fd_triangle_6}}\label{fig:triangles_6} 
     \end{tabular}
     \label{fig:triangles}
     \end{figure}
-
-\section{Drawings}
-
-    Below are sample examples of the program working. A few frames from the 
-    program have been picked in order to best depict the working of both program
-    and discrete Fourier series.
-
-\subsection{Triangle}
-
     
 \subsection{Cube}
 
@@ -649,11 +717,11 @@ void draw_IDFT(C_set &x_k, VertexArray &drawing, unsigned n)
     \caption{}
     \begin{tabular}{ccc}
     \subfloat[original input]{\includegraphics[width=0.3\linewidth]{fd_cube_input}} &
-    \subfloat[n = 2]{\includegraphics[width=0.3\linewidth]{fd_cube_1}} &
-    \subfloat[n = 15]{\includegraphics[width=0.3\linewidth]{fd_cube_2}}\\
-    \subfloat[n = 239]{\includegraphics[width=0.3\linewidth]{fd_cube_3}} &
-    \subfloat[n = 314]{\includegraphics[width=0.3\linewidth]{fd_cube_4}} &
-    \subfloat[n = 322]{\includegraphics[width=0.3\linewidth]{fd_cube_6}} 
+    \subfloat[k = 2]{\includegraphics[width=0.3\linewidth]{fd_cube_1}} &
+    \subfloat[k = 10]{\includegraphics[width=0.3\linewidth]{fd_cube_2}}\\
+    \subfloat[k = 403]{\includegraphics[width=0.3\linewidth]{fd_cube_3}} &
+    \subfloat[k = 671]{\includegraphics[width=0.3\linewidth]{fd_cube_4}} &
+    \subfloat[k = 691]{\includegraphics[width=0.3\linewidth]{fd_cube_6}} 
     \end{tabular}
     \label{fig:cubes}
     \end{figure}
@@ -665,11 +733,11 @@ void draw_IDFT(C_set &x_k, VertexArray &drawing, unsigned n)
     \caption{}
     \begin{tabular}{ccc}
     \subfloat[original input]{\includegraphics[width=0.3\linewidth]{fd_pi_input}} &
-    \subfloat[n = 2]{\includegraphics[width=0.3\linewidth]{fd_pi_1}} &
-    \subfloat[n = 15]{\includegraphics[width=0.3\linewidth]{fd_pi_2}}\\
-    \subfloat[n = 239]{\includegraphics[width=0.3\linewidth]{fd_pi_3}} &
-    \subfloat[n = 314]{\includegraphics[width=0.3\linewidth]{fd_pi_4}} &
-    \subfloat[n = 322]{\includegraphics[width=0.3\linewidth]{fd_pi_6}} 
+    \subfloat[k = 2]{\includegraphics[width=0.3\linewidth]{fd_pi_1}} &
+    \subfloat[k = 20]{\includegraphics[width=0.3\linewidth]{fd_pi_2}}\\
+    \subfloat[k = 710]{\includegraphics[width=0.3\linewidth]{fd_pi_3}} &
+    \subfloat[k = 713]{\includegraphics[width=0.3\linewidth]{fd_pi_4}} &
+    \subfloat[k = 716]{\includegraphics[width=0.3\linewidth]{fd_pi_6}} 
     \end{tabular}
     \label{fig:pis}
     \end{figure}
@@ -680,7 +748,7 @@ void draw_IDFT(C_set &x_k, VertexArray &drawing, unsigned n)
 
 \subsection{Appendix B}
 
-    Python script used to generate plots of functions mapped to unit circle.
+    Python script used to depict workings of DFT.
 
     \begin{minted}{Python}
 def wrap_function(func_in, freq):
@@ -720,6 +788,62 @@ def plot_complex(data, name):
 
 \subsection{Appendix C}
 
+    Python script used to generate data for plots used in explaining IDFT.
+
+    \begin{minted}{Python}
+def generate_fs(coeff, freq, offset):
+    
+    fs = np.fromfunction(
+            np.vectorize(lambda i : 
+                complex(np.cos((i * freq) / 100), 
+                    np.sin((i * freq) / 100)) * coeff + offset),
+            (629,), 
+            dtype=complex)
+
+    return fs
+    \end{minted}
+
+    Python script used to plot data.
+
+    \begin{minted}{Python}
+def plot_fs(coeff, epicycles, n, step):
+
+    colors = ['b','g','r','c','m','y']
+
+    if epicycles: 
+        for k in range(n):
+            offset = complex(0,0)
+            fs = list()
+
+            for i in range(0, len(coeff)):
+                fs.append(generate_fs(coeff[i], i+1, offset))
+                offset += (fs[i][k * step] - offset)
+
+            offset = complex(0,0)
+
+            for f in fs:
+                color = colors[k % len(colors)]
+                plt.plot(f.real, f.imag, color)
+                plt.plot([offset.real,f[k * step].real], [offset.imag,f[k * step].imag], color)
+                offset += (f[k * step] - offset)
+    else:
+        fs = list()
+        for i in range(0, len(coeff)):
+            fs.append(generate_fs(coeff[i], i+1, 0))
+        out = sum(fs)
+        plt.plot(out.real, out.imag)
+        
+
+    plt.gca().set_aspect('equal', adjustable='box')
+    plt.xlabel('real')
+    plt.ylabel('imaginary')
+    plt.show()
+    plt.savefig('dfs_explainer.png')
+
+    \end{minted}
+
+\subsection{Appendix D}
+
     \paragraph{Prerequisites}
     \begin{itemize}
         \item gcc / Clang / LLVM compiler for C++11 and higher
@@ -745,6 +869,18 @@ def plot_complex(data, name):
             window
         \item \textbf{J} to decrease the number of arguments in Fourier drawer 
             window
+    \end{itemize}
+
+\section{Bibliography}
+
+    \begin{itemize}
+        \item ``But what is the Fourier Transform? A visual introduction.'' YouTube, 
+            uploaded by 3Blue1Brown, \url{https://www.youtube.com/watch?v=spUNpyF58BY}
+        \item ``But what is a Fourier series? From heat flow to circle drawings | DE4'' 
+            YouTube, uploaded by 3Blue1Brown, \url{https://www.youtube.com/watch?v=r6sGWTCMz2k}
+        \item ``Electrical engineering : Signals and systems : Fourier series'' Khan
+            Academy, \url{https://www.khanacademy.org/science/electrical-engineering/ee-signals#ee-fourier-series} 
+        \item ``Discrete Fourier transform'', Wikipedia, \url{https://en.wikipedia.org/wiki/Discrete_Fourier_transform}
     \end{itemize}
 
 \end{document}
