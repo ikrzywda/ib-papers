@@ -23,27 +23,28 @@
 
 \section{Introduction}
 
-    One time when I was binging YouTube, I stumbled upon a video by Grant Sanderson
-    of 3Blue1Brown on Fourier series which featured many visualizations, prime of
-    whose were drawings on a complex plain which were generated using Fourier
-    series. Having done some reading on Fourier series as well as Fourier transform, 
-    I decided that it would be a great idea to actually understand those concepts.
-    Since for me the ultimate way of learning is solving problems and since I feel
-    best at expressing ideas in code, I decided to set myself a challenge of 
-    programming a program that will redraw my sketches with Fourier series.
+    Over the last year I have been getting increasingly more interested in mathematics,
+    however I have not been acting on it. I want to change it with this paper 
+    and actively learn something new. My topic of choice is Fourier series because
+    I have been mesmorized by animations in explainer video on Fourier series done
+    by 3Blue1Brown\footnote{``But what is a Fourier series? From heat flow to circle drawings | DE4'' 
+    YouTube, uploaded by 3Blue1Brown, \url{https://www.youtube.com/watch?v=r6sGWTCMz2k}}.
+    Because at this point I already have some programming experience, my goal is 
+    to make a program that will take any sketch as input and recreate it using 
+    discrete Fourier series.
 
 \section{What is Fourier series?}
 
     The purpose of Fourier series is to approximate any periodic function with
-    a sum of sines and cosines. The formula is given by~\eqref{eq:fs_rbase}
+    a sum of sines and cosines. The formula is given in equation~\eqref{eq:fs_rbase}
     \begin{equation} \label{eq:fs_rbase}
         S_\infty(t) = a_0 + \sum_{n=1}^{\infty}a_ncos\frac{2\pi nt}{P} + b_n%
             sin\frac{2\pi nt}{P}
     \end{equation}
     From the formula we can observe two things, each sine and cosine in the sum
     has a weight assigned to it ($a_n$ and $b_n$) and that $n$ determines the 
-    frequency of the sinusoids. We can demistify the idea behind Fourier series
-    by deriving formulas for all coefficients.
+    frequency of the sinusoids. Now we shall walk through the process of deriving
+    formulas for those coefficients.
 
 \subsection{Deriving $a_0$}
     
@@ -61,7 +62,7 @@
     The problem to solve is to find the axis against which the sum will oscillate
     The solution to this problem is the average
     value of the original function over one period. The formula given for finding
-    $a_0$ goes as follows~\eqref{eq:a0_formula}
+    $a_0$ goes as in equation~\eqref{eq:a0_formula}
     \begin{equation}\label{eq:a0_formula}
         a_0 = \frac{1}{P}\int_{\frac{P}{2}}^{\frac{-P}{2}}f(t)dt
     \end{equation}
@@ -77,7 +78,7 @@
 
     Coefficients $a_n$ and $b_n$ determine the amplitudes of sine waves of frequency
     $n$. Since the goal is to approximate some function $f(t)$ with a sum of 
-    weighted sines and cosines, let that be the starting point.~\eqref{eq:eq_fs_f(t)}
+    weighted sines and cosines, let that be the starting point - equation~\eqref{eq:eq_fs_f(t)}
     \begin{equation} \label{eq:eq_fs_f(t)}
         f(t) = a_0 + \sum_{n=1}^{\infty}a_ncos\frac{2\pi nt}{P} + b_n%
             sin\frac{2\pi nt}{P}
@@ -109,8 +110,8 @@
     \begin{enumerate}
         \item \begin{equation*}
                 \int_{-\frac{P}{2}}^{\frac{P}{2}}a_0cos\frac{2\pi nt}{P}dt
-                = a_0 \cdot \left[\frac{P}{2\pi n}sin\frac{2\pi nt}{P}\right]_{-\frac{P}{2}}^{\frac{P}{2}}
-                = a_0 \cdot \frac{P}{2\pi n}(sin(\pi n) - sin(-\pi n)) = 0
+                = a_0  \left[\frac{P}{2\pi n}sin\frac{2\pi nt}{P}\right]_{-\frac{P}{2}}^{\frac{P}{2}}
+                = a_0  \frac{P}{2\pi n}(sin(\pi n) - sin(-\pi n)) = 0
               \end{equation*}
         \item For $m \in N$ and $m \neq n$
             \begin{equation*}
@@ -118,11 +119,11 @@
                 \int_{-\frac{P}{2}}^{\frac{P}{2}} a_mcos \frac{2\pi mt}{P} 
                 cos\frac{2\pi nt}{P} dt %
                 %-------------------------------------------------------------
-                & = a_m \cdot \int_{-\frac{P}{2}}^{\frac{P}{2}} \frac{1}{2} 
+                & = a_m  \int_{-\frac{P}{2}}^{\frac{P}{2}} \frac{1}{2} 
                 \left( cos\frac{(m-n)2 \pi t}{P} 
                 + cos\frac{(m+n)2 \pi t}{P} \right) dt \\%
                 %-------------------------------------------------------------
-                & = \frac{a_m}{2} \cdot \left[ \frac{P}{(m-n)2\pi n}
+                & = \frac{a_m}{2} \left[ \frac{P}{(m-n)2\pi n}
                 sin\frac{(m-n)2 \pi t}{P} + \frac{P}{(m+n)2\pi n} 
                 sin\frac{(m+n)2 \pi t}{P}  \right]_{-\frac{P}{2}}^{\frac{P}{2}} \\%
                 %-------------------------------------------------------------
@@ -138,11 +139,11 @@
                 \int_{-\frac{P}{2}}^{\frac{P}{2}} b_msin \frac{2\pi mt}{P} 
                 cos\frac{2\pi nt}{P}dt %
                 %-------------------------------------------------------------
-                & = b_m \cdot \int_{-\frac{P}{2}}^{\frac{P}{2}}\frac{1}{2} 
+                & = b_m  \int_{-\frac{P}{2}}^{\frac{P}{2}}\frac{1}{2} 
                 \left(sin\frac{(m+n)2 \pi t}{P} + 
                 sin\frac{(m-n)2 \pi t}{P}\right)dt \\ %
                 %-------------------------------------------------------------
-                & = \frac{b_m}{2} \cdot \left[\frac{-P}{2\pi(m+n)}cos\frac{(m+n)2\pi t}{P}
+                & = \frac{b_m}{2} \left[\frac{-P}{2\pi(m+n)}cos\frac{(m+n)2\pi t}{P}
                 + \frac{-P}{2\pi(m-n)}cos\frac{(m-n)2\pi t}{P}
                 \right]_{-\frac{P}{2}}^{\frac{P}{2}} \\ %
                 %-------------------------------------------------------------
@@ -158,7 +159,7 @@
                 \int_{-\frac{P}{2}}^{\frac{P}{2}} b_nsin \frac{2\pi nt}{P} 
                 cos\frac{2\pi nt}{P}dt %
                 %-------------------------------------------------------------
-                & = b_n \int_{-\frac{P}{2}}^{\frac{P}{2}} \frac{1}{2} \left
+                & = b_n \int_{-\frac{P}{2}}^{\frac{P}{2}} \frac{1}{2} \left(
                 sin\frac{4\pi nt}{P} + sin(0) \right) dt \\ %
                 %-------------------------------------------------------------
                 & = \frac{b_n}{2} \left[ \frac{-P}{4\pi n}cos\frac{4\pi nt}{P}
@@ -171,12 +172,13 @@
         \item
             \begin{equation*}
             \begin{split}
-                \int_{-\frac{P}{2}}^{\frac{P}{2}}cos^2(\frac{2\pi nt}{P})dt
-                & = \frac{1}{2}\int_{-\frac{P}{2}}^{\frac{P}{2}}1 + cos\frac{4\pi nt}{P}dt 
-                = \frac{1}{2} \cdot \left[t + \frac{P}{4\pi n}sin\frac{4\pi nt}{P}
+                \int_{-\frac{P}{2}}^{\frac{P}{2}}a_n cos^2(\frac{2\pi nt}{P})dt
+                & = a_n\int_{-\frac{P}{2}}^{\frac{P}{2}}
+                \frac{1}{2}\left(1 + cos\frac{4\pi nt}{P} \right)dt 
+                = \frac{a_n}{2} \left[t + \frac{P}{4\pi n}sin\frac{4\pi nt}{P}
                 \right]_{-\frac{P}{2}}^{\frac{P}{2}} \\
-                & = \frac{1}{2}\left( \frac{P}{2} - \frac{4\pi n}{P}sin(2\pi n) + 
-                \frac{P}{2} + \frac{4\pi n}{P}sin(-2\pi n)\right) = \frac{P}{2}
+                & = \frac{a_n}{2}\left( \frac{P}{2} - \frac{P}{4\pi n}sin(2\pi n) + 
+                \frac{P}{2} + \frac{P}{4\pi n}sin(-2\pi n)\right) = a_n\frac{P}{2}
             \end{split}
             \end{equation*}
     \end{enumerate}
@@ -191,7 +193,7 @@
     \begin{equation}\label{eq:a_n}
         a_n = \frac{2}{P}\int_{-\frac{P}{2}}^{\frac{P}{2}}f(t)cos\frac{2\pi nt}{P}dt
     \end{equation}
-    Formula for $b_n$ is very similar~\eqref{eq:b_n} and stems from the same logic as one of 
+    Formula for $b_n$~\eqref{eq:b_n} is very similar and stems from the same logic as one of 
     $a_n$, see Appendix A for calculations.
     \begin{equation}\label{eq:b_n}
         b_n = \frac{2}{P}\int_{-\frac{P}{2}}^{\frac{P}{2}}f(t)sin\frac{2\pi nt}{P}dt
@@ -220,14 +222,13 @@
         \item $sin(\theta) = -sin(-\theta)$
         \item $cos(\theta) = cos(-\theta)$ 
     \end{itemize}
-    If the input
-    function $f(t)$ is either even or odd, we need to pay attention to how
-    the functions that describe $a_n$ and $b_n$ look like, because if this function
-    is odd, we can establish from the start that is is zero. If both functions
-    are the same in terms of being even or odd, then the product function will
-    be even. If one function is even and other is odd, however, then the product
-    function will be odd. Coming back to Fourier series, if we are computing 
-    coefficients $a_n$ and $b_n$, we can state that:
+    if input function $f(t)$ is either even or odd, we can eliminate coefficients
+    $a_n$ or $b_n$ before making any calculations. When computing those coefficients,
+    an integral is taken from product of input function and either sine or cosine
+    function. If two functions of the same type are multiplied, then the product
+    function is even, however, if the functions multiplied are of different type,
+    then the product function is odd, which means that its integral will be zero,
+    hence we can state that:
     \begin{itemize}
         \item if function $f(t)$ is even, then
             \begin{equation*}
@@ -311,7 +312,7 @@
 
 \subsection{Taking input}
     
-    Input is taken from the user in form of an array of $(X,Y)$ coordinates on 
+    Input is taken from the user in form of an array of $(x,y)$ coordinates on 
     a window prompted using SFML (Simple and Fast Multimedia Library) for C++ 
     programming language (Figure~\ref{fig:input_window}). If the mouse is 
     left-clicked and moved, the coordinates
@@ -322,13 +323,14 @@
         \includegraphics[width=0.3\linewidth]{input_window}
         \label{fig:input_window}
     \end{figure}
+    After confirming the input, all values in the array are converted to complex
+    numbers, which is necessary for later calculations.
 
-\subsection{Implementation of complex numbers}
+\subsection{Complex numbers}
 
     The drawing is a set of points with $x$ and $y$ coordinates, however, all 
     calculations done in the next stages need to be done on complex numbers.
-    Akin to points that are described in terms of coordinates, complex numbers
-    are also described in terms of
+    Similarly to points, complex numbers are also described in terms of
     two dimensions. One of them everyone knows really well, because this is the 
     the real component, which, as the name suggests, consists of real numbers.
     The component that allows us to move vertically does not belong on the real 
@@ -342,7 +344,12 @@
         \includegraphics[width=0.3\linewidth]{imaginary_number}
         \label{fig:complex_number}
     \end{figure}
-    The implementation of complex numbers in code is a template structure 
+    A drawing then, is a set of complex numbers describing positions of pixels on
+    the window which is treated as a complex plane.
+
+\subsection{Implementation of complex numbers in the program}
+
+    Complex numbers in code are implemented using template structure 
     containing two fields - real component (\texttt{re}) and imaginary (\texttt{im}).
     \begin{minted}{C++}
 template <class T>
@@ -393,8 +400,8 @@ struct Complex
             ..., x_{N-1} \right\}$
     \end{itemize}
     
-    The first thing to go through is why we are multiplying our input complex 
-    number by a complex sum?
+    Let us first walk through concepts that will make understanding the transform
+    easier.
 
 \subsubsection{Expressing a point on a unit circle using complex numbers}
 
@@ -446,8 +453,8 @@ struct Complex
     form of $cos(2\theta)$ from $0$ to $2\pi$, and $k$ (or frequency) is $1$, which 
     means that all values will be mapped within one revolution around the unit circle
     (Figure~\ref{fig:cos_wrapped}, where subfigure~\ref{subfig:cos_2t} is the plot
-    of set $x$ and subfigure~\ref{subfig:cos_2t_wrapped} is the plot of results)
-    of the expression~\eqref{eq:mapping}
+    of set $x$ and subfigure~\ref{subfig:cos_2t_wrapped} is the plot of results
+    of the expression~\eqref{eq:mapping})
     \begin{figure}[H]
       \caption{}\label{fig:cos_wrapped}
       \centering
@@ -456,7 +463,7 @@ struct Complex
             \label{subfig:cos_2t}%
             }
       \hfill
-        \subfloat[$cos(2t)$ - wrapped]%
+        \subfloat[$cos(2t)$ - mapped to unit circle]%
             {\includegraphics[width=0.4\textwidth]{cos_wrapped}%
             \label{subfig:cos_2t_wrapped}%
             }
@@ -468,8 +475,8 @@ struct Complex
 
 
     If we do the same operation, but now we change $k$ to match the frequency of
-    the input, which is $2$, as the function $cos(2t)$, that the input set is a discrete
-    form of, completes two cycles in one period. If we plot all of those values
+    the input, which is $2$, as function $cos(2t)$, completes two cycles in 
+    one period. If we plot all of those values
     along with the average of the sum, we get what is shown in 
     Figure~\ref{fig:cos_wrapped_2k}.
     \begin{figure}[H]
@@ -479,18 +486,21 @@ struct Complex
         \label{fig:cos_wrapped_2k}
     \end{figure}
     The shape that the values formed in this case is different, as it is only 
-    symmetric horizontally, which means that the imaginary components will cancel
-    out, whereas the real components will give a non-zero value, which, after
-    taking the average is in the center of this shape.
+    symmetric about horizontal axis, which means that the imaginary components 
+    will cancel out, whereas the real components will give a non-zero value, 
+    which is represented by the dot on the plot.
 
 
-    The results of DFT tell how much present a component that can be described as
-    $cos\left(\frac{2\pi}{N}kn\right) - isin\left( \frac{2\pi}{N}kn\right)$ is 
-    in the set. The concrete values are used later on in phase where Fourier 
-    series is used.
+    The results of DFT tell how much there is of a component that can be described as
+    $cos\left(\frac{2\pi}{N}kn\right) - isin\left( \frac{2\pi}{N}kn\right)$  
+    in the set. So instead of describing input in domain of time, we are now 
+    describing it in domain of frequencies.
+    The results of DFT are later used in discrete Fourier series as
+    coefficients.
 
 
-    We can, however, take a look how the values will align when we will be applying
+    Before that, let us take a look at how the values will align when we will
+    be applying
     DFT to sets that are a discrete form of sum of sinusoids. This is one of the 
     most important uses of DFT, as sound signals are composed of many sine waves 
     with different frequencies and DFT allows for finding those frequencies. 
@@ -509,7 +519,6 @@ struct Complex
     \frac{2\pi}{N}kn\right)$. $k$ in the
     captions shows the value of $k$ used in the expression and the dots in the
     plots are the averages of the results of DFT.
-    $\frac{1}{N}$
     \begin{figure}[H]
     \caption{}
     \begin{tabular}{cc}
@@ -518,13 +527,13 @@ struct Complex
     \subfloat[k = 20]{\includegraphics[width=0.4\linewidth]{decomposed_2}} &
     \subfloat[k = 25]{\includegraphics[width=0.4\linewidth]{decomposed_3}}
     \end{tabular}
-    \label{step_fs_plots}
+    \label{fig:step_fs_plots}
     \end{figure}
     We can see that for values of $k$ that correspond to the frequencies of the
     sinusoids making up the original function, the plots bias towards one side,
     which causes the sums of all those values to be bigger than zero.
     
-    See Appendix B for source code of script used to generate all plots above.
+    \paragraph{See Appendix B for source code of script used to generate all plots above.}
 
 \subsubsection{Why naive implementation of DFT is inefficient}
 
@@ -568,12 +577,13 @@ C_set *DFT(C_set input)
     size $n$, the computer will make $n^2$ operations. This is very inefficient
     and slow for real-life applications of DFT, as the sizes of inputs for those
     applications can get very big. For example, a WAV file containing 1 second of
-    audio signal has $44'100$ samples. Processing a short song would take a lot
+    audio signal has $44'100$ samples. Processing a short song in that format
+    would take a lot
     of computing resources. This is why in most actual implementations of DFT,
     an algorithm called Fast Fourier Transform (FFT) is used, whose time complexity
     is $\mathcal{O}(n\log(n))$.
 
-\subsection{Fourier series and making drawings}
+\subsection{Discrete Fourier series and making drawings}
 
     The last stage of the program is to recreate the original drawing using the
     inverse discrete Fourier transform (IDFT), which is the same as discrete
@@ -633,7 +643,7 @@ C_set *DFT(C_set input)
     the output value $x_n$ is at the end of each of collection of lines representing
     complex numbers. If we now plot the values returned by discrete Fourier 
     series with the same coefficients (Figure~\ref{fig:dfs_explainer_4}), we can 
-    see some shape - and such shapes will be the drawings generated by the 
+    see a shape - and such shapes will be the drawings generated by the 
     program.
     \begin{figure}[H]
         \caption{}
@@ -691,8 +701,8 @@ void draw_IDFT(C_set &x_k, VertexArray &drawing, unsigned n)
 
     Below are sample examples of the program working. A few frames from the 
     program have been picked in order to best depict the working of both program
-    and discrete Fourier series. $N$ in the top-left corner is the size of set
-    containing DFT coefficients.
+    and discrete Fourier series. $N$ in the top-left corner is the number of
+    terms added in the series.
 
 \subsection{Triangle}
 
@@ -745,6 +755,50 @@ void draw_IDFT(C_set &x_k, VertexArray &drawing, unsigned n)
 \section{Appendices}
 
 \subsection{Appendix A}
+
+    Calculations for finding $b_n$
+    \begin{equation*}
+    \begin{split}
+        \int_{-\frac{P}{2}}^{\frac{P}{2}}f(t)sin\frac{2\pi nt}{P}dt 
+        = \int_{-\frac{P}{2}}^{\frac{P}{2}}a_0sin\frac{2\pi nt}{P}dt 
+        & +\int_{-\frac{P}{2}}^{\frac{P}{2}}a_1cos\frac{2\pi t}{P}sin\frac{2\pi nt}{P}dt +
+        \int_{-\frac{P}{2}}^{\frac{P}{2}}b_1sin\frac{2\pi t}{P}sin\frac{2\pi nt}{P}dt \\
+        & + \int_{-\frac{P}{2}}^{\frac{P}{2}}a_2cos\frac{4\pi t}{P}sin\frac{2\pi nt}{P}dt +
+        \int_{-\frac{P}{2}}^{\frac{P}{2}}b_2sin\frac{4\pi t}{P}sin\frac{2\pi nt}{P}dt \\
+        & \vdots \\
+        & + \int_{-\frac{P}{2}}^{\frac{P}{2}}a_ncos\frac{2\pi nt}{P}sin\frac{2\pi nt}{P}dt +
+        \int_{-\frac{P}{2}}^{\frac{P}{2}}b_nsin^2(\frac{2\pi nt}{P})dt 
+        + ...
+    \end{split}
+    \end{equation*}
+    \begin{enumerate}
+        \item 
+            \begin{equation*}
+                \int_{-\frac{P}{2}}^{\frac{P}{2}}a_0sin\frac{2\pi nt}{P}dt
+                = a_0 \cdot \left[\frac{-P}{2\pi n}cos\frac{2\pi nt}{P}\right]_{-\frac{P}{2}}^{\frac{P}{2}}
+                = a_0 \cdot \frac{-P}{2\pi n}(cos(\pi n) - cos(-\pi n)) = 0
+            \end{equation*}
+        \item 
+            \begin{equation*}
+            \begin{split}
+                \int_{\frac{P}{2}}^{-\frac{P}{2}} b_n sin^2(\frac{2\pi nt}{P})dt
+                & = b_n \int_{\frac{P}{2}}^{-\frac{P}{2}} \frac{1}{2}(1 - cos\frac{2\pi nt}{P})dt \\
+                & = \frac{b_n}{2}\left[ t - \frac{P}{2\pi n}sin\frac{2\pi nt}{P} 
+                \right]_{\frac{P}{2}}^{-\frac{P}{2}} \\
+                & = \frac{b_n}{2}\left( \frac{P}{2} - \frac{P}{2\pi n}sin(\pi n)
+                + \frac{P}{2} + \frac{P}{2\pi n}sin(-\pi n) \right) = \frac{b_nP}{2}
+            \end{split}
+            \end{equation*}
+        \item 
+            \begin{equation*}
+                \int_{-\frac{P}{2}}^{\frac{P}{2}}f(t)sin\frac{2\pi nt}{P}dt = 
+                b_n\frac{P}{2}
+            \end{equation*}
+            \begin{equation*}
+                b_n = \frac{2}{P}\int_{-\frac{P}{2}}^{\frac{P}{2}}f(t)sin\frac{2\pi nt}{P}dt
+            \end{equation*}
+            
+    \end{enumerate}
 
 \subsection{Appendix B}
 
