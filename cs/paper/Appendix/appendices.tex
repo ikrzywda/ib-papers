@@ -1,0 +1,188 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[margin=0.75in]{geometry}
+
+\title{Appendices}
+\date{}
+
+\begin{document}
+    
+\maketitle
+
+\section{References}
+    
+    \begin{itemize}
+        \item Aho, Alfred, et al. \textit{Compilers: Principles, Techniques, and
+            Tools}. Pearson, 1986
+        \item Pivak, Ruslan. \textit{Let's Build A Simple Interpreter}, 
+            \url{https://ruslanspivak.com/lsbasi-part1/}
+    \end{itemize}
+
+\section{Appendix A}
+
+\subsection{List of complaints regarding using pseudocode I gathered from my friends}
+
+    \begin{itemize}
+        \item \textit{``I hate having to check the code myself, it's a waste
+            of time.''}
+        \item \textit{``The online tool we use is helpful, but the lack of 
+            error detection annoys me to the point I ignore the tasks because
+            I don't have the time to check every bit of code.''}
+        \item \textit{``Pseudocode is easy, it takes a bit of practice and
+            you can find bugs quite fast on your own, you can live without
+            a dedicated tool.''}
+    \end{itemize}
+
+
+\subsection{Transcript of conversation with my friend Jan who was most interested 
+        in my idea (translated to English)}
+
+    \begin{itemize}
+        \item Igor Krzywda (me): So I have this idea to build interpreter for 
+            the pseudocode, what do you think?
+        \item Jan Gumulak (JG): Don't we already have the tool for this, the one
+            on the website?
+        \item me: Yeah, I know, but I want my version to detect errors so that 
+            we don't have to waste time looking for them manually. Would you use
+            something like this?
+        \item JG: Of course, I hate having to look for them, especially when during
+            lesson everyone has some different error and we have to discuss every
+            one before we move on. It takes ages!
+        \item me: Ok, then, when I have something I'll send you link to my repo.
+        \item JG: Sure, I'll check it out.
+    \end{itemize}
+   
+\subsection{Transcript of the first meeting with my advisor - my computer science
+        teacher}
+
+    \begin{itemize}
+        \item Igor Krzywda (me): Hello, I talked with others about my idea to make
+            an interpreter for pseudocode which would detect errors in the code.
+            Everyone seemed to be positive about the idea, so I did some deeper
+            research and got general outline of what I'm going to do.
+        \item Przemysław Pobiedziński (PP): Okay, that sounds good. What is the
+            general outline?
+        \item me: From what I read, the intepretation goes something like this:
+            the source code in text needs to be divided into tokens, which are
+            some identifier and a piece of data. Then all tokens need to be put
+            into a tree so that in the end I can traverse it and do operations
+            based on what is in any given node.
+        \item PP: Seems correct, do you have resources to learn details from?
+            Because you described the idea very generally.
+        \item me: Yes, there are a lot of resources online, so I think I will
+            be good on that front. Oh, I even managed to borrow the dragon book
+            on compilers, it is supposed to be a really good textbook.
+        \item PP: Sounds good. What do you want to write it in?
+        \item me: I want to make it in plain C.
+        \item PP: Are you sure? You are already taking on rather complex project,
+            if you use C, you will have to write your own data structures and you
+            will have to manage memory yourself. It will distract you from the main
+            problem and will slow you down.
+        \item me: I know, but I want to learn as much as possible, so I thought 
+            that writing in more low-level language would be a good idea.
+        \item PP: I understand you, but you have to keep in mind that you don't 
+            have unlimited time so you take a big risk doing that. Why don't you
+            use C++, it is a middle ground - you will have the access to programming
+            on a low level of abstraction, but if you feel that it is getting too
+            hard, you can use built-in containers. Not to mention that C++ handles
+            strings, which I think in your case would be an immense benefit.
+        \item me: Hmm... I think that you may be right. I will try to start writing
+            in C, but if I feel that it is too hard for me, I will switch to C++.
+        \item PP: Okay, do you have anything else you want to consult with me?
+        \item me: No I don't think I have. Thank you for your time.
+        \item PP: Sure.
+    \end{itemize}
+
+\section{Appendix B}
+
+    Below is a list of tests done to test success criteria, source code is in 
+    directory \texttt{product/ibpci/examples/tests}. The tests have also been done
+    in the video.
+    \begin{itemize}
+        \item \texttt{data\_types\_demo.ib} - checking that all data structures,
+            as well as I/O 
+        \item \texttt{bubble\_sort.ib} - testing loops and conditionals
+        \item \texttt{binary\_search.ib} - testing recursion
+        \item \texttt{fizzbuzz.ib} - testing expressions in conditions
+        \item \texttt{error\_demos/*.ib} - testing error detection, where filename
+            describes expected error
+    \end{itemize}
+
+
+\section{Appendix C}
+
+\subsection{Client feedback - general thoughts}
+
+    \begin{itemize}
+        \item \textit{``I like it. I intentionally put some errors and it
+            detected them, even gave the line number!''}
+        \item \textit{``Everything worked great, but I wish you made a binary,
+            it took me a lot of time to set everything up, though I feel that
+            it was a good investment considering that we will be doing a lot
+            of pseudocode''}
+        \item \textit{``It took a bit of figuring out with using command prompt,
+            but I used it and it was really nice to see errors pop up. Think
+            about making a GUI version, because not a lot of people will use
+            it on Windows otherwise.''}
+        \item \textit{``Man, I tried but didn't have the time to set everything
+            up to compile the project. Make a Windows binary and I'll surely try
+            it''}
+        \item \textit{``It worked quite well, but when I tried to compute a factorial
+            recursively it crashed completely, something doesn't work with that''}
+    \end{itemize}
+
+\subsection{Client feedback - conversation with Jan}
+
+    \begin{itemize}
+        \item Igor Krzywda (me): So what do you think?
+        \item Jan Gumulak (JG): I like it, I haven't yet written code that crashed
+            it, so I guess that's not bad.
+        \item me: So I guess you didn't tinker a lot with recursion yet. What
+            about errors, are they useful?
+        \item JG: Oh, they are great, especially syntax ones. Run-time errors
+            sometimes give strange descriptions, one time I got comparison
+            between null and string.
+        \item me: Hmm... I'll look into that, thank you. Have you tried the flags?
+        \item JG: Yes, but I don't think that they are a nice quirk. The one 
+            displaying tokens is interesting, same with the tree, but if someone
+            was to learn from that, you need to make some documentation. The stack
+            flag, on the other hand, was quite useful, I was tracking the variables
+            in the functions. You could make it a bit cleaner, though, it is not
+            very readable.
+        \item me: I'll work on that, thanks.
+        \item JG: No problem.
+    \end{itemize}
+   
+\subsection{Final meeting with advisor - transcript}
+
+    \begin{itemize}
+        \item Igor Krzywda (me): Hello, I sent you the source of the project and
+            success criteria. Could you try it and compare it with success criteria?
+        \item Przemysław Pobiedziński (PP): Sure, I will try it and get back to 
+            you.
+        \item me: Okay, thank you.
+        \item PP: I tried the test programs you included and everything works 
+            like in the film, so the most of the success criteria you set check
+            out. However, there is no cheat-sheet you gave in the list. Also, I 
+            tried some recursive algorithms, and some of them worked, but when
+            I tried returning an expression containing function call, I got an 
+            error, so you need to work on that. Over all I think that everything
+            in terms of goal you set yourself is fine.
+        \item me: Thank you, do you have any extra suggestions or problems you 
+            came across outside the success criteria?
+        \item PP: Yes, I think that you shuld make a graphical interface for others
+            to be able to use more easily. The program is good, but it is not
+            very user-friendly, if you made a GUI it would be a great tool to use
+            during lessons, but at this moment it is too hard for someone with 
+            no experence to use, not to mention compiling it. Another thing I 
+            would add are generic collections, notice that in the exercises you 
+            need to use a collection, not a stack or queue. 
+        \item me: Thank you for your feedback, I will keep it in mind when I will
+            be playing with the program.
+    \end{itemize}
+
+
+\end{document}

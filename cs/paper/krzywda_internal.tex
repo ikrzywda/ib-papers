@@ -1,0 +1,463 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{minted}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[margin=0.75in]{geometry}
+
+\title{IBPCI - the IB Pseudocode Interpreter}
+\author{Igor Krzywda}
+
+\begin{document}
+
+\maketitle
+
+\section{Analysis}
+\subsection{Problem}
+The problem IBPCI solves is the lack of a dedicated tool for executing and debugging
+IB pseuodocode. First objection one might have is that pseudocode by definition is
+not meant to be executed and only used to present problems in a more approachable
+way. This is true, but IB curriculum treats pseudocode as a proper programming language,
+as it is required on the exams and even though it allows for more flexibility, still,
+a student has to be familiar enough with it to write algorithms in a predefined syntax. 
+\subsubsection*{Reality of learning pseudocode}
+Practice in learning anything is key. The way pseudocode is meant to be learnt is to 
+write it on paper, however, writing code on paper allows
+for making mistakes that cannot be found very effectively making practice quite cumbersome,
+as the student often can be ignorant of their mistakes when they are practicing on their 
+own, and in class, it always takes simulating programs on paper, which is counterproductive
+and a general waste of time. Considering that average IB student's schedule is quite
+tight, it is not a good investment to practice writing code that cannot be easily tested
+and will never be used outside school. An interpreter, which is IBPCI, would allow
+students to quickly write and debug their code and refine their skills more efficiently.
+\subsubsection*{Existing solutions}
+Currently there are two paths one may take to execute their pseudocode. One is Dave 
+Mulkey's web tool which converts pseudocode to JavaScript without and only analysis
+done on the code is done during run-time in JS done by JS interpreter, all of which
+is left out of sight of the user (it would not be of much help, as one would have to 
+know how the code is translated to get meaningful information about errors in source 
+code). Other route is to go on GitHub and search for pseudocode interpreter, however
+none of the projects have meaningful documentation and are often not complete, so it
+is not a feasable solution. 
+\subsubsection*{Lack in standard}
+A discrete goal for this project is to create an unofficial, concrete standard describing
+grammars and behavior of the IB pseudocode. Such standard could be used for developing
+different implementations of IB pseudocode. All of this is because the only information
+about pseudocode can be found in either textbooks or data booklets. It would also free the information
+about writing pseudocode from rather expensive official IB CS textbooks.
+\subsubsection*{Target group}
+Target group are students and teachers working with IB computer science curriculum for
+the reasons mentioned above. 
+
+\subsection{End goals}
+\paragraph{Type of interpreter : tree-walk}
+\paragraph{Language of implementation : C++14}
+\paragraph{Functionality:}
+\begin{itemize}
+    \item executing IB pseudocode consistent with developed 
+        standard based on limited documentation made by IB
+        \begin{itemize}
+            \item methods
+            \item recursion
+            \item containers and ADT's
+                \begin{itemize}
+                    \item fixed-sized, multidimensional arrays
+                    \item stacks 
+                    \item queues
+                \end{itemize}
+            \item while and ``from to'' loops
+            \item if else statements
+            \item arithmetics with operator precedence
+        \end{itemize}
+    \item throwing lexical errors (undefined characters)
+    \item throwing syntax errors
+    \item throwing run-time errors
+    \item flag to toggle printing abstract syntax tree
+    \item flag to toggle logging and printing call stack
+    \item cheat-sheet available with a flag
+\end{itemize}
+\paragraph{Additional goals:}
+\begin{itemize}
+    \item whole syntax defined in BNF (Backaus-Naur form)
+    \item documentation on behavior and functionality of the language
+\end{itemize}
+
+\section{Solution Overview}
+\subsection*{Technologies}
+\begin{itemize}
+    \item \textbf{C++14} (g++ compiler)
+        \begin{itemize}
+            \item implementation language
+            \item provides abstraction mechanisms without performance loss
+        \end{itemize}
+    \item \textbf{ASAN (ASan)} 
+        \begin{itemize}
+            \item debugging tool
+            \item detects memory corruption (leaks, buffer and stack overflows)
+        \end{itemize}
+    \item \textbf{CMake}
+        \begin{itemize}
+            \item tool for generating makefiles 
+            \item makes building larger C/C++ projects less cumbersome
+        \end{itemize}
+\end{itemize}
+\subsection*{Test Plan}
+In order to test success criteria, a series of programs will be written to test criteria
+described in Analysis. Link to repository: \url{https://github.com/ikrzywda/ibpci/tree/master/examples}
+\subsection*{Language design}
+\subsubsection*{Tokens}
+Tokens represented in regular expressions, which also doubles as a blueprint for lexer.
+\begin{verbatim}
+ID : [A-Z]([A-Z] | [0-9] | _)*
+METHOD_ID : ([A-Z] | [a-z])[a-z]+ ([A-Z] | [a-z] | _)*
+NUMBER : [0-9]+\.?[0-9]*
+STRING : "."
+
+RESERVED KEYWORDS / SYMBOLS:
+
+method
+if else then loop
+while from to end
+AND OR
++ - * / div %
+< > >= <= == !=
+( ) [ ]
+\end{verbatim}
+\subsubsection*{Grammar}
+Backaus-Naur form (BNF) of IB pseudocode developed with reference to 
+exam handout and pseudocode agenda. Since the parser is of recursive-descent type,
+each terminal reflects how the parser builds abtract syntax tree.
+\begin{verbatim}
+program :: block
+         | block method
+         | empty
+
+method_decl :: METHOD METHOD_ID (param_decl) block END METHOD
+
+param_decl  :: ID
+             | ID, param_decl
+             | empty
+
+block   :: stmt block 
+         | stmt
+         | empty
+
+stmt    :: assignment
+         | if
+         | for loop
+         | while loop
+         | method_call
+         | expr
+         | return
+         | std_method
+         | BREAK
+
+assignment  :: ID = expr
+             | ID = condition
+             | ID = arr_decl
+             | ID = arr_empty
+             | ID = std_method
+             | ID = STACK
+             | ID = QUEUE
+
+if  :: IF condition THEN block END IF
+     | IF condition THEN block ELSE if END IF
+     | IF condition THEN block ELSE if ELSE block END IF
+     | IF condition THEN block ELSE block
+
+for_loop    :: LOOP id FROM expr TO expr block END LOOP
+
+while_loop  :: LOOP WHILE condition block END LOOP
+
+method_call :: method_id(params) 
+
+return  :: RETURN expr
+         | RETURN condition
+         | RETURN
+
+params  :: list_of_elements
+
+condition   :: cmp AND cmp
+             | cmp OR cmp
+             | cmp
+
+cmp :: expr > expr
+     | expr < expr
+     | expr >= expr
+     | expr <= expr
+     | expr == expr
+     | expr != expr
+
+expr    :: term + term
+         | term - term
+         | term
+
+term    :: factor * factor
+         | factor / factor
+         | factor DIV factor
+         | factor MOD factor
+         | factor
+
+factor  :: NUM
+         | STRING
+         | ID
+         | method_call
+         | std_method
+         | arr_acc
+         | (expr)
+
+arr_decl    :: [list_of_elements]
+             | [arr_decl, arr_decl]
+
+list_of_elements    :: expr
+                     | expr, list_of_elements
+                     | empty
+
+arr_empty   :: ARRAY(list_of_elements)
+
+arr_acc :: ID accessor
+
+accessor    :: [NUM]
+             | [NUM] accessor
+             | empty
+
+std_method  :: OUTPUT(params)
+             | INPUT(STRING)
+             | container_method
+
+container_method    :: ID.length()
+                     | ID.push()
+                     | ID.pop(params)
+                     | ID.enqueue(params)
+                     | ID.dequeue()
+                     | ID.getNext()
+
+\end{verbatim}
+\section{Development}
+\subsection*{Lexer}
+Lexer  the part of a translator that converts text into tokens, which in case of 
+IBPCI are instances of class Token. Token holds type a type and a value, which can
+be either numerical or a string. Lexer simulates finite deterministic automaton that
+based on current characted, goes into some state. In Figure~\ref{snip_1} is function
+\emph{id}, which returns a token of variable id, method id or a keyword. The function
+works by taking a character from the buffer and checking whether it is an alphanumerical
+characted or an underscore (as stated in token definitions) and if it fits, it gets added
+to a smaller buffer that holds token value. Because there is a distinction between
+variable is and method id, there must be a variable that keeps track of what token lexer
+is dealing with. By default this variable signifies variable name, but if there appears
+a lower-case letter, its value starts to signify method name. Last test that must be
+done is to check whether the lexeme is a keyword. In order to do that, method 
+\emph{lookup\_keyword} gets called with buffer as its argument, which checks whether
+the lexeme is a keyword in a map defined in \emph{Token} class. If it is a keyword, 
+it returns the id of corresponding keyword, otherwise, it returns 0. At the bottom, 
+the token variable inside \emph{Lexer} class gets mutated and the address of that
+token is returned.
+\begin{figure}[H]
+    \caption{}
+    \label{snip_1}
+    \begin{minted}{c++}
+        tk::Token &Lexer::id()
+        {
+            int id = tk::ID_VAR;
+            attr_buffer.push_back(c);
+
+            if(!is_upcase(c)) id = tk::ID_METHOD;
+
+            advance();
+
+            while(std::isalnum(c) || c == '_')
+            {
+                if(!is_upcase(c)) id = tk::ID_METHOD;
+
+                attr_buffer.push_back(c);
+                advance();
+            }
+            if(tk::lookup_keyword(attr_buffer) > 0)
+                id = tk::lookup_keyword(attr_buffer);
+
+            token.mutate(id, attr_buffer, line_num);
+            return token;
+        }   
+    \end{minted}
+\end{figure}
+\subsection*{Parser}
+Parser in the case of IBPCI is a recursive-descend parser where each terminal defined in 
+grammar has its corresponting method. The goal of parser is to make an intermediate representation
+(IR) of the source code. In the case of IBPCI the IR is an abstract syntax tree (AST). As an example
+of how AST is built by the parser we will go through function \emph{expr()}
+that returns, as the name suggests, an AST of an expression.
+For better reference, we will use the grammar definition of expression in our language, 
+as the parser function is a direct implementation of this rule.
+\begin{verbatim}
+expr    :: term + term
+         | term - term
+         | term
+\end{verbatim}
+Expression in Pseudocode is a an addition of terms, subtraction of terms or just a term.
+This is caused by operator precedence, as addition and subtraction are at the end, and the 
+interpreter evaluates and executes AST with depth-first tree traversal, so it makes sense for 
+the addition and subtraction to be executed at the end. With that out of the way we can get to 
+the code itself.
+\begin{figure}[H]
+    \caption{}
+    \label{snip_1}
+    \begin{minted}[linenos]{c++}
+        ast::AST *Parser::expr()
+        {
+            ast::AST *root, *new_node;
+            root = term();
+
+            while(token.id == tk::PLUS 
+                    || token.id == tk::MINUS)
+            {
+                new_node = new ast::AST(token, ast::BINOP);
+                new_node->push_child(root);
+                root = new_node;
+                eat(token.id);
+                new_node->push_child(term());
+            }
+            return root;
+        }
+    \end{minted}
+\end{figure}
+We start by declaring two variables that will hold poitners to AST nodes. We assign \emph{root}
+pointer to \emph{term}, as it is the first nonterminal that has to be 
+evaluated in each of cases in the grammar. Then, if the next token is neither \emph{PLUS}, nor
+\emph{MINUS}, we return the node. In other case we enter the while loop that will turn as long as
+the token during the check is \emph{PLUS} or \emph{MINUS}. Inside the loop, we assign a pointer to 
+a subroot to variable \emph{new\_node}, which is the terminal of binary operation holding the operator.
+The node currently held by \emph{root} is the left operand of binary operation and is linked to the root
+by funtion \emph{push\_child} that appends the pointer to the vector inside the node holding the children.
+After \emph{root} reclaiming the root of the tree, we advance to the next token using method \emph{eat}, which
+checks whether the current token is the same as requested token by a method. Because we already checked if the 
+token is correct, we just pass the id of current token. Lastly, we append another \emph{term} to our root and
+either repeat the process or break out of the loop and return the poitner to the tree. This method, along with 
+helper functions \emph{term} and \emph{factor} provided an example expression $10 + 100 * 10 - 6$ will output
+following tree (actual output of the interpreter with flag \emph{-p}):
+\begin{verbatim}
+|--[-]               
+    |--[+]        
+        |--[10]   
+        |--[*]     
+        |--[100]
+        |--[10] 
+    |--[6]        
+\end{verbatim}
+\subsubsection*{Call Stack}
+Becuse Pseudocode includes methods, so the memory of the program cannot be one big container, but rather, it
+needs to be a stack. Call stack, as the name suggests is the stack that holds method calls. Because, as methods
+are being called in program, each needs to get its activation record, which holds values of variables and upon calling
+by interpreter, returns the values of variables requested by the interpreter. Call stack only manages activation records
+and because methods are being executed sequentially, stack is the ADT of choice. \emph{CallStack} class is just a wrapper
+for a literal stack, provided by standard C++ library, holding unique pointers to activation records. When an interpreter 
+stumbles upon method call, an activation record is created and pushed onto the stack and executed, if there is another
+method call from the within, another activation record is created and pushed onto the stack. All of this can go until 
+stack buffer overflow, which means that the activation records have exceeded the RAM. 
+\subsubsection*{Interpreter}
+Interpreter is the part where the magic happens and the pseudocode comes to life. Interpreter of IBPCI is 
+a tree-walk interpreter, which means that the code is directly evaluated and executed with reference to 
+AST build by the parser. The interpreter does pre-order traversal on the AST and if the evaluation of the semantics is 
+successful, the code gets executed. There will be two examples from the interpreter, one with method responsible for 
+binary operations and other for method call.
+\begin{figure}[H]
+    \caption{}
+    \label{snip_1}
+    \begin{minted}[linenos]{c++}
+rf::Reference *Interpreter::binop
+        (rf::Reference *l, rf::Reference *r, int op)
+{
+    int type = check_types(l, r);
+    rf::Reference *out;
+        if(type == tk::STRING)
+        {
+            if(op == tk::PLUS)
+            { 
+                out = add(l, r);
+            }
+            else
+            { 
+                delete l;
+                error("cannot make this type of comparison on strings", r);
+            }
+    }
+    else if(op == tk::MINUS || op == tk::MULT || op == tk::PLUS)
+    {
+        switch(op)
+        {
+            case tk::PLUS: { out = add(l, r); break; }
+            case tk::MINUS:
+                 {
+                    out = new rf::Reference(l->token.val_num - r->token.val_num); 
+                    break;
+                 }
+            case tk::MULT: 
+                 {
+                    out = new rf::Reference(l->token.val_num * r->token.val_num); 
+                    break;
+                 }
+        }
+    }
+    else
+    {
+        out = divide(l, r, op);
+    }
+    delete l; delete r;
+    return out;
+}
+    \end{minted}
+\end{figure}
+In order to evaluate a binary operation, \emph{binop} takes as arguments left and right node of an expression subtree along
+with the operator. This is because binary operation is bound to the right side of assignment, and because there are more
+right-bound expressions, there is a function that manages that choice so that functions working with terminals can be 
+cleaner and more readable. The first function, which is called is \emph{check\_types}, returns the type of expression, but
+also has optional side effect of throwing a run-time error when incompatible types are to be computed. When the type check is 
+successful, there are two main branches. If the type is a string, the interpreter is only to execute concatenation, which 
+means that only viable operator is addition, which is tested in 6th line. If the types are numerical, then all binary operations 
+can be performed. Addition, subtraction and multiplication are divided from divisions and modulo because they do not need checking 
+for zero in right value. If any of the options checks out, a new reference (a field in activation record) is created with 
+literal expression in its constructor. In the end, all heap-allocated, redundant objects are disposed of to prevent memory leaks and
+pointer to reference is returned.
+\begin{figure}[H]
+    \caption{}
+    \label{snip_1}
+    \begin{minted}[linenos]{c++}
+rf::Reference *Interpreter::method_call(ast::AST *root)
+{
+    std::string method_name = root->token.val_str;
+    std::vector<rf::Reference*> computed_params;
+    rf::Reference *return_reference;
+
+    if(!root->children.empty())
+        collect_params(root->children[0], &computed_params);
+
+    call_stack.push_AR(method_name, lookup_method(method_name, root));
+    ast::AST *method_root = call_stack.peek_for_root();
+    init_record(root, &computed_params);
+
+    if(method_root->children.size() == 2)
+    {
+        return_reference = exec_block(method_root->children[1]);
+    }
+    else
+    {
+        return_reference = exec_block(method_root->children[0]);
+    }
+    call_stack.pop();
+    return return_reference;
+}
+    \end{minted}
+\end{figure}
+The most complex process when interpreting source code in undoubtedly calling methods. As explained with call stack, each function
+call requires an instance of activation record pushed onto the stack. When the interpreter enters the subtree of method call, the 
+first thing on the agenda is to compute and collect arguments from function call to a vector of references. After that an instance
+of activation record is made and pushed onto the stack. Function \emph{lookup\_method} checks for declaration of called method and returns
+the pointer to the root of body of the method, which later is assigned to variable \emph{method\_root}. Having done that, the record gets 
+populated with references by method \emph{init\_record} which assigns values to all variables while also checking for arity (number of 
+supplied arguments). The last if statement branches between function without arguments and one with arguments because their structure varies, as
+the first node of AST of method with arguments are, well, arguments, and for one without, it is the body of the function which the 
+intepreter is interested in. The \emph{block} node (defined in grammar) is then passed to method executing blocks of statements 
+\emph{exec\_block} and assigning pointer to return reference to the \emph{return\_reference} variable. After that, the top of the stack is 
+popped and the reference is returned. Recursion is possible owing to \emph{exec\_block} method because it can call another method
+allowing for repeating the whole process on activation record pushed onto the current one.
+\section{Appendices}
+\end{document}

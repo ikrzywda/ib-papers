@@ -1,0 +1,71 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[margin=0.75in]{geometry}
+
+\title{Criterion A}
+\author{Word count: 308}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Problem}
+
+    Pseudocode is an integral part of IB computer science curriculum. It is used
+    to during lessons and during exams, so students need to be proficient at it.
+    The problem is that the syntax of this pseudocode is quite strict, so during
+    lessons we are assessing whether the code is correct manually. Despite there
+    being an existing online interpreter for IB pseudocode to check for logic errors
+    \footnote{link to existing interpreter: \url{http://ibcomp.fis.edu/pseudocode/pcode.html}}, it lacks in crucial
+    feature which is error detection, which leaves students tracking subtle syntax
+    errors for code to even run. Both myself and my friends have been frustrated 
+    with this state of things, which forces us to waste time on mindless searching
+    for errors that are purely syntactic and do not improve our skill [See 
+    Appendix A for concrete complaints from my friends]. In order
+    to remedy that situation, I came forward with proposition to build a 
+    fully-fledged interpreter with lexical, syntax and run-time error detection.
+    Due to there not being a strict standard for IB pseudocode, I would write
+    the whole grammar for IB pseudocode, which could also serve as learning
+    resource. Because I had to go outside the curriculum to find everything about
+    how interpreters work, I constructed success criteria based on technical ascpects
+    of the project.
+
+
+\section{Success criteria}
+
+\paragraph{Type of interpreter : tree-walk}
+\paragraph{Language of implementation : \texttt{C++14}}
+\paragraph{Features:}
+\begin{itemize}
+    \item executing IB pseudocode consistent with developed 
+        standard based on documentation and exam booklets made by IB:
+        \begin{itemize}
+            \item methods
+            \item recursion
+            \item containers and ADT's
+                \begin{itemize}
+                    \item fixed-sized, multidimensional arrays
+                    \item stacks 
+                    \item queues
+                \end{itemize}
+            \item while and ``from to'' loops
+            \item if else statements
+            \item arithmetics with operator precedence
+        \end{itemize}
+    \item throwing lexical errors (undefined characters)
+    \item throwing syntax errors
+    \item throwing run-time errors
+    \item flag to toggle printing abstract syntax tree
+    \item flag to toggle logging and printing call stack
+    \item cheat-sheet available with a flag
+\end{itemize}
+\paragraph{Additional goals:}
+\begin{itemize}
+    \item whole syntax defined in BNF (Backaus-Naur form)
+
+\end{itemize}
+
+\end{document}
